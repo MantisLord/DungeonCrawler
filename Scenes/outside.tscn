@@ -1,0 +1,57 @@
+[gd_scene load_steps=14 format=3 uid="uid://j7c4rxxa0usc"]
+
+[ext_resource type="PackedScene" uid="uid://077fp6hi7wle" path="res://Scenes/player.tscn" id="1_wilet"]
+[ext_resource type="Texture2D" uid="uid://bv3n2c8pixm8n" path="res://Assets/Sky/DaySkyHDRI027B_4K-HDR.exr" id="2_mt3ha"]
+[ext_resource type="PackedScene" uid="uid://o4p1dfik2w5y" path="res://Scenes/ground.tscn" id="4_54xjy"]
+[ext_resource type="PackedScene" uid="uid://clps0bvwoym1" path="res://Scenes/GridTiles/tan_brick.tscn" id="4_pfxs6"]
+[ext_resource type="PackedScene" uid="uid://670vnoinvluw" path="res://Scenes/GridTiles/gray_brick.tscn" id="5_v3061"]
+[ext_resource type="PackedScene" uid="uid://cmrtk351upw8b" path="res://Scenes/GridTiles/rock.tscn" id="6_on5ww"]
+[ext_resource type="PackedScene" uid="uid://fq5hau7vawro" path="res://Scenes/GridTiles/marble.tscn" id="7_hmhnj"]
+[ext_resource type="PackedScene" uid="uid://v0ewvq8jsro6" path="res://Scenes/GridTiles/dirt.tscn" id="8_m0bin"]
+[ext_resource type="PackedScene" uid="uid://nmbx2lstjp78" path="res://Scenes/GridTiles/tile.tscn" id="9_7lskg"]
+[ext_resource type="PackedScene" uid="uid://dj6h7noef44lh" path="res://Scenes/GridTiles/paving_stone.tscn" id="10_2xtn8"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_qgick"]
+panorama = ExtResource("2_mt3ha")
+
+[sub_resource type="Sky" id="Sky_df6rq"]
+sky_material = SubResource("PanoramaSkyMaterial_qgick")
+
+[sub_resource type="Environment" id="Environment_ve0dc"]
+background_mode = 2
+background_energy_multiplier = 3.0
+sky = SubResource("Sky_df6rq")
+
+[node name="Outside" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1_wilet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ve0dc")
+
+[node name="Ground" parent="." instance=ExtResource("4_54xjy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 0)
+
+[node name="grid" type="Node3D" parent="."]
+
+[node name="TanBrick" parent="grid" instance=ExtResource("4_pfxs6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -2)
+
+[node name="GrayBrick" parent="grid" instance=ExtResource("5_v3061")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, 0)
+
+[node name="Rock" parent="grid" instance=ExtResource("6_on5ww")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 2)
+
+[node name="Marble" parent="grid" instance=ExtResource("7_hmhnj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, 0)
+
+[node name="Dirt" parent="grid" instance=ExtResource("8_m0bin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -4)
+
+[node name="Tile" parent="grid" instance=ExtResource("9_7lskg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, 2)
+
+[node name="PavingStone" parent="grid" instance=ExtResource("10_2xtn8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 2)

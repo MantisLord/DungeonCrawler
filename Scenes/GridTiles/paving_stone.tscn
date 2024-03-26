@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://dj6h7noef44lh"]
+
+[ext_resource type="Texture2D" uid="uid://4732faey7y6m" path="res://Assets/Textures/PavingStones138_1K-PNG_Color.png" id="1_lnw8d"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wxw65"]
+albedo_texture = ExtResource("1_lnw8d")
+metallic = 0.75
+metallic_specular = 0.0
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_2oqlk"]
+material = SubResource("StandardMaterial3D_wxw65")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="PavingStone" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_2oqlk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

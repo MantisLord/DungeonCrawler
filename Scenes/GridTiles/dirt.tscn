@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://v0ewvq8jsro6"]
+
+[ext_resource type="Texture2D" uid="uid://bu1tm6uoilngk" path="res://Assets/Textures/Ground048_1K-PNG_Color.png" id="1_r4rwv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3htqe"]
+albedo_texture = ExtResource("1_r4rwv")
+metallic_specular = 0.0
+roughness = 0.25
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_4oqye"]
+material = SubResource("StandardMaterial3D_3htqe")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="Dirt" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_4oqye")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

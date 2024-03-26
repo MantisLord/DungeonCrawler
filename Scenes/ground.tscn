@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://o4p1dfik2w5y"]
+
+[ext_resource type="Texture2D" uid="uid://bu1tm6uoilngk" path="res://Assets/Textures/Ground048_1K-PNG_Color.png" id="1_efx23"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8skhs"]
+albedo_texture = ExtResource("1_efx23")
+uv1_scale = Vector3(100, 100, 100)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_fstxj"]
+material = SubResource("StandardMaterial3D_8skhs")
+size = Vector2(100, 100)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_q1vcj"]
+points = PackedVector3Array(-50, 0, -50, -50, 0, 50, 50, 0, -50, 50, 0, 50)
+
+[node name="Ground" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_fstxj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_q1vcj")

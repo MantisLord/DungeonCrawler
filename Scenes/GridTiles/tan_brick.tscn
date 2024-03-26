@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://clps0bvwoym1"]
+
+[ext_resource type="Texture2D" uid="uid://d0qp12ovf2bjo" path="res://Assets/Textures/Bricks091_1K-PNG_Color.png" id="1_a6h6v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tqp5u"]
+albedo_texture = ExtResource("1_a6h6v")
+metallic = 0.2
+metallic_specular = 0.0
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_bkxy4"]
+material = SubResource("StandardMaterial3D_tqp5u")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="TanBrick" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_bkxy4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

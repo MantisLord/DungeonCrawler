@@ -1,120 +1,289 @@
 using Godot;
-using System.Diagnostics.CodeAnalysis;
-using static Godot.TextServer;
+using static Game;
+using static AudioManager;
 
 public partial class Player : Node3D
 {
-    public const int TILE_SIZE = 2;
+    private const string INTERACT_ACTION_NAME = "interact";
+    private const float SWORD_ANIM_SPEED = 0.3f;
+    private const float MOVE_SPEED = 0.3f;
 
     private Game game;
+    private AudioManager audioMgr;
 
-    private Label info;
+    private Label interactLabel;
+    private Label regionLabel;
+    private Label logLabel;
+    private ScrollContainer logScroll;
 
     private RayCast3D forwardRay;
     private RayCast3D backRay;
     private RayCast3D leftRay;
     private RayCast3D rightRay;
-
-
-    private const float moveLerpModifier = 0.3f;
-    private float t = 0;
-
-    public bool tookActionThisTick = false;
-    Action queuedAction = Action.None;
-    Vector3 lerpTarget = Vector3.Zero;
-
-    private float targetYRotation = 0;
-
     private Tween tween;
 
-    public enum Action
-    {
-        None,
-        Forward,
-        Back,
-        StrafeLeft,
-        StrafeRight,
-        TurnLeft,
-        TurnRight,
-    }
+    private Item equippedItem;
+    private bool canUse = false;
+    private bool canEquip = true;
+
+    private bool foundItem1 = false;
+    private bool foundItem2 = false;
+    private bool foundItem3 = false;
+
+    // ui
+    private Control menu;
+    private TextureRect item1Texture;
+    private TextureRect item2Texture;
+    private TextureRect item3Texture;
+    private PanelContainer item1Panel;
+    private PanelContainer item2Panel;
+    private PanelContainer item3Panel;
+
+    private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
+
+    private string keycodeString;
+    private InteractableArea interactAreaType;
+    private Node3D interactAreaParent;
+    private AnimationPlayer anim;
+
+    public bool tookActionThisTick = false;
 
     public override void _Ready()
     {
         game = GetNode<Game>("/root/Game");
+        game.DebugLog += HandleDebugLogSignal;
+        audioMgr = GetNode<AudioManager>("/root/AudioManager");
         game.Tick += () => tookActionThisTick = false;
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
-        info = GetNode<Label>("InfoLabel");
+        interactLabel = GetNode<Label>("UserInterface/InfoLabel");
+        regionLabel = GetNode<Label>("UserInterface/SecondaryPanelContainer/VBoxContainer/RegionLabel");
+        logScroll = GetNode<ScrollContainer>("UserInterface/SecondaryPanelContainer/VBoxContainer/ScrollContainer");
+        logLabel = logScroll.GetNode<Label>("LogLabel");
+        anim = GetNode<AnimationPlayer>("AnimationPlayer");
+
+        item1Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item1Panel");
+        item2Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item2Panel");
+        item3Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item3Panel");
+
+        item1Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item1Panel/Item1TextureRect");
+        item2Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item2Panel/Item2TextureRect");
+        item3Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item3Panel/Item3TextureRect");
+
         tookActionThisTick = false;
+        interactLabel.Text = "";
+        interactAreaType = InteractableArea.None;
+        game.Log($"Entered {GetParent().Name}.");
+        SetInteractKeycodeString();
         base._Ready();
     }
 
-    private void HandleMoveTween(Vector3 direction)
+    private void AddItem(Item item)
     {
-        tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-        tween.TweenProperty(this, "position", Position + direction.Rotated(Vector3.Up, Rotation.Y) * 2.0f, moveLerpModifier);
-        tween.Play();
+        switch (item)
+        {
+            case Item.Sword:
+                item1Texture.Texture = swordTexture;
+                audioMgr.Play(Audio.InteractSuccess, AudioChannel.SFX1);
+                game.Log($"Picked up {Item.Sword}.");
+                foundItem1 = true;
+                break;
+        }
     }
 
-    private void HandleRotateTween(bool left)
+    private async void UnequipItem()
     {
-        var shift = left ? (Mathf.Pi / 2.0) : -(Mathf.Pi / 2.0);
-        tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-        tween.TweenProperty(this, "rotation:y", Rotation.Y + shift, moveLerpModifier);
-        tween.Play();
+        canUse = false;
+        canEquip = false;
+        var style = new StyleBoxFlat
+        {
+            BgColor = new Color("BLACK")
+        };
+
+        anim.PlayBackwards($"Raise{equippedItem}");
+        switch (equippedItem)
+        {
+            case Item.Sword:
+                audioMgr.Play(Audio.SheathSword, AudioChannel.SFX2);
+                item1Panel.AddThemeStyleboxOverride("panel", style);
+                break;
+        }
+        game.Log($"Unequipped {equippedItem}.");
+        await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
+        equippedItem = Item.None;
+        canEquip = true;
+    }
+    private async void EquipItem(Item newItem)
+    {
+        canUse = false;
+        canEquip = false;
+        if (newItem != Item.None)
+        {
+            switch (newItem)
+            {
+                case Item.Sword:
+                    audioMgr.Play(Audio.DrawSword, AudioChannel.SFX2);
+                    var style = new StyleBoxFlat();
+                    style.BgColor = new Color("YELLOW");
+                    style.SetCornerRadiusAll(20);
+                    item1Panel.AddThemeStyleboxOverride("panel", style);
+                    break;
+            }
+            anim.Play($"Raise{newItem}");
+            await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
+            canUse = true;
+            canEquip = true;
+            game.Log($"Equipped {newItem}.");
+        }
+        equippedItem = newItem;
+    }
+
+    private async void UseItem()
+    {
+        game.Log($"Used {equippedItem}.");
+        switch (equippedItem)
+        {
+            case Item.Sword:
+                canUse = false;
+                canEquip = false;
+                audioMgr.Play(Audio.SwingSword, AudioChannel.SFX2);
+                anim.Play("SwingSword");
+                await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED * 2), SceneTreeTimer.SignalName.Timeout);
+                anim.Play($"RaiseSword");
+                await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
+                canUse = true;
+                canEquip = true;
+                break;
+        }
+    }
+
+    private void SetInteractKeycodeString()
+    {
+        foreach (var action in InputMap.ActionGetEvents(INTERACT_ACTION_NAME))
+            if (action.GetType() == typeof(InputEventKey))
+                keycodeString = OS.GetKeycodeString(((InputEventKey)action).PhysicalKeycode);
+    }
+
+    private void OnArea3DEntered(Area3D area)
+    {
+        if (area.Name == InteractableArea.SwordPickupArea3D.ToString())
+        {
+            interactLabel.Text = $"Press [{keycodeString}] to pick up sword!";
+            interactAreaType = InteractableArea.SwordPickupArea3D;
+            interactAreaParent = area.GetParent<Node3D>();
+        }
+    }
+    private void OnArea3DExited(Area3D area)
+    {
+        if (area.Name == InteractableArea.SwordPickupArea3D.ToString())
+        {
+            interactLabel.Text = "";
+            interactAreaType = InteractableArea.None;
+            interactAreaParent = null;
+        }
+    }
+
+    private void Interact()
+    {
+        switch (interactAreaType)
+        {
+            case InteractableArea.None:
+                // play oopmf sound, nothing here to use
+                break;
+            case InteractableArea.SwordPickupArea3D:
+                AddItem(Item.Sword);
+                interactAreaParent.QueueFree();
+                break;
+        }
     }
 
     public override void _Process(double delta)
     {
-        
-        info.Text = $"Position (X: {System.Math.Round(Position.X,2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z,2)})\nRotationDegrees {Rotation.Y}";
+        regionLabel.Text = $"Position (X: {System.Math.Round(Position.X,2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z,2)})" +
+            $"\nRotationDegrees {Rotation.Y}" +
+            $"\nEquipped: {equippedItem}" +
+            $"\nCanUse: {canUse}" +
+            $"\nCanEquip: {canEquip}" +
+            $"\nFPS: {Engine.GetFramesPerSecond()}";
 
-        //if (lerpTarget != Vector3.Zero)
-        //    return;
+        if (Input.IsActionJustPressed("interact"))
+        {
+            Interact();
+        }
+        if (Input.IsActionJustPressed("equip_item1") && foundItem1 && canEquip)
+        {
+            switch (equippedItem)
+            {
+                case Item.Sword:
+                    UnequipItem();
+                    break;
+                case Item.None:
+                    EquipItem(Item.Sword);
+                    break;
+            }
+        }
+        if (Input.IsActionJustPressed("equip_item2"))
+        {
+        }
+        if (Input.IsActionJustPressed("equip_item3"))
+        {
+        }
+        if (Input.IsActionJustPressed("use_item") && canUse)
+        {
+            UseItem();
+        }
+
         if (tween != null && tween.IsRunning())
             return;
-        if (Input.IsActionJustPressed("forward") && !forwardRay.IsColliding())
+        if (Input.IsActionPressed("forward") && !forwardRay.IsColliding())
         {
-            HandleMoveTween(Vector3.Forward);
+            tween = game.HandleMoveTween(this, Vector3.Forward, MOVE_SPEED);
+            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
         }
-        if (Input.IsActionJustPressed("back") && !backRay.IsColliding())
+        if (Input.IsActionPressed("back") && !backRay.IsColliding())
         {
-            HandleMoveTween(Vector3.Back);
+            tween = game.HandleMoveTween(this, Vector3.Back, MOVE_SPEED);
+            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
         }
-        if (Input.IsActionJustPressed("strafe_right") && !rightRay.IsColliding())
+        if (Input.IsActionPressed("strafe_right") && !rightRay.IsColliding())
         {
-            HandleMoveTween(Vector3.Right);
+            tween = game.HandleMoveTween(this, Vector3.Right, MOVE_SPEED);
+            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
         }
-        if (Input.IsActionJustPressed("strafe_left") && !leftRay.IsColliding())
+        if (Input.IsActionPressed("strafe_left") && !leftRay.IsColliding())
         {
-            HandleMoveTween(Vector3.Left);
+            tween = game.HandleMoveTween(this, Vector3.Left, MOVE_SPEED);
+            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
         }
-        if (Input.IsActionJustPressed("turn_left"))
+        if (Input.IsActionPressed("turn_left"))
         {
-            HandleRotateTween(true);
+            tween = game.HandleRotateTween(this, 1, MOVE_SPEED);
         }
-        if (Input.IsActionJustPressed("turn_right"))
+        if (Input.IsActionPressed("turn_right"))
         {
-            HandleRotateTween(false);
+            tween = game.HandleRotateTween(this, -1, MOVE_SPEED);
         }
-
-        //if (!tookActionThisTick)
-        //{
-        //    if (queuedAction != Action.None)
-        //    {
-        //        HandleAction(queuedAction);
-        //        queuedAction = nextAction;
-        //    }
-        //    else
-        //    {
-        //        HandleAction(nextAction);
-        //    }
-        //}
-        //else if (nextAction != Action.None)
-        //    queuedAction = nextAction;
-
         base._Process(delta);
+    }
+
+    private void HandleDebugLogSignal()
+    {
+        SyncDebugLogText();
+    }
+    public async void SyncDebugLogText()
+    {
+        logLabel.Text = game.allLogText;
+        // wait a tiny bit here, otherwise the vertical scroll max value won't update in time for us to scroll to the bottom...
+        await ToSignal(GetTree().CreateTimer(0.01f), SceneTreeTimer.SignalName.Timeout);
+        logScroll.ScrollVertical = (int)logScroll.GetVScrollBar().MaxValue;
+    }
+
+    // without this, disposed object will still receive signals
+    public override void _ExitTree()
+    {
+        game.DebugLog -= HandleDebugLogSignal;
+        base._ExitTree();
     }
 }

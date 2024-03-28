@@ -1,6 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=17 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
+[ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
+[ext_resource type="PackedScene" uid="uid://it3pfbmv6ili" path="res://Scenes/main_menu.tscn" id="3_ylxxm"]
+[ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
+[ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -11,6 +15,101 @@ height = 1.0
 albedo_color = Color(1, 0, 0, 1)
 metallic = 1.0
 roughness = 0.5
+
+[sub_resource type="Animation" id="Animation_7wxft"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.692, -2.1, -0.635)]
+}
+
+[sub_resource type="Animation" id="Animation_6erxf"]
+resource_name = "RaiseSword"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.692, -2.1, -0.635), Vector3(0.692, 0, -0.635)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sword:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.0663225, 1.31772, 2.87107), Vector3(0.0663225, 1.31772, 2.87107)]
+}
+
+[sub_resource type="Animation" id="Animation_0gtdv"]
+resource_name = "SwingSword"
+length = 0.3
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sword:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.692, 0, -0.635), Vector3(0, 0, -0.635), Vector3(-1, -0.25, -0.635)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sword:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.0670375, 1.31753, 2.87126), Vector3(1.5708, 1.5708, 1.5708), Vector3(1.0472, 1.5708, 0.785398)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_87lao"]
+_data = {
+"RESET": SubResource("Animation_7wxft"),
+"RaiseSword": SubResource("Animation_6erxf"),
+"SwingSword": SubResource("Animation_0gtdv")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iswf5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gjks"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3y167"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0xo"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5s4hn"]
+content_margin_bottom = 5.0
+bg_color = Color(0, 0, 0, 1)
+border_blend = true
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_sig3l")
@@ -44,16 +143,127 @@ target_position = Vector3(1.5, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
-[node name="InfoLabel" type="Label" parent="."]
+[node name="MainMenu" parent="." instance=ExtResource("3_ylxxm")]
+visible = false
+
+[node name="Sword" parent="." instance=ExtResource("3_62v5a")]
+transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669873, 0.00937421, 0.00242358, 0.00250004, 0.692, -2.1, -0.635)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_87lao")
+}
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("CapsuleShape3D_iswf5")
+
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InfoLabel" type="Label" parent="UserInterface"]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
+offset_left = -56.5
 offset_top = -11.5
-offset_right = 20.0
+offset_right = 56.5
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "THIS IS A TEST"
+text = "PLACEHOLDER"
+
+[node name="MainPanelContainer" type="PanelContainer" parent="UserInterface"]
+layout_mode = 1
+offset_right = 345.0
+offset_bottom = 60.0
+theme_override_styles/panel = ExtResource("4_yr6r6")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UserInterface/MainPanelContainer"]
+layout_mode = 2
+
+[node name="HP" type="Label" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "HP:"
+
+[node name="HPProgressBar" type="ProgressBar" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+value = 100.0
+
+[node name="Item" type="Label" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "Item:"
+
+[node name="Item1Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7gjks")
+
+[node name="Item1TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item1Panel"]
+layout_mode = 2
+texture = ExtResource("5_8gkou")
+expand_mode = 3
+
+[node name="Item2Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3y167")
+
+[node name="Item2TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item2Panel"]
+layout_mode = 2
+texture = ExtResource("5_8gkou")
+expand_mode = 3
+
+[node name="Item3Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wk0xo")
+
+[node name="Item3TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item3Panel"]
+layout_mode = 2
+texture = ExtResource("5_8gkou")
+expand_mode = 3
+
+[node name="SecondaryPanelContainer" type="PanelContainer" parent="UserInterface"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_styles/panel = ExtResource("4_yr6r6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UserInterface/SecondaryPanelContainer"]
+layout_mode = 2
+
+[node name="RegionLabel" type="Label" parent="UserInterface/SecondaryPanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 12
+text = "(X, Y, Z)"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UserInterface/SecondaryPanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_5s4hn")
+
+[node name="LogLabel" type="Label" parent="UserInterface/SecondaryPanelContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Log"
+
+[connection signal="area_entered" from="Area3D" to="." method="OnArea3DEntered"]
+[connection signal="area_exited" from="Area3D" to="." method="OnArea3DExited"]

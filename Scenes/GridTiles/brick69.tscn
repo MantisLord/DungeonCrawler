@@ -1,0 +1,30 @@
+[gd_scene load_steps=8 format=3 uid="uid://b2b1n2xrl3c56"]
+
+[ext_resource type="Texture2D" uid="uid://gog2qx72v1qj" path="res://Assets/Textures/Bricks069/Bricks069_1K-PNG_Color.png" id="1_kmnd6"]
+[ext_resource type="Texture2D" uid="uid://c2qof51jrof4r" path="res://Assets/Textures/Bricks069/Bricks069_1K-PNG_AmbientOcclusion.png" id="2_a11nu"]
+[ext_resource type="Texture2D" uid="uid://uucgwpw41hpf" path="res://Assets/Textures/Bricks069/Bricks069_1K-PNG_NormalGL.png" id="3_evllf"]
+[ext_resource type="Texture2D" uid="uid://jgp7cr84l1rr" path="res://Assets/Textures/Bricks069/Bricks069_1K-PNG_Roughness.png" id="4_r0f1b"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d1vni"]
+albedo_texture = ExtResource("1_kmnd6")
+roughness_texture = ExtResource("4_r0f1b")
+normal_enabled = true
+normal_texture = ExtResource("3_evllf")
+ao_enabled = true
+ao_texture = ExtResource("2_a11nu")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_1d076"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ntibl"]
+size = Vector3(2, 2, 2)
+
+[node name="Brick69" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_d1vni")
+mesh = SubResource("BoxMesh_1d076")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_ntibl")

@@ -1,0 +1,210 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3a5q4u1jxba0"]
+
+[ext_resource type="PackedScene" uid="uid://csxo26l4afah4" path="res://Scenes/GridTiles/brick76c.tscn" id="1_40t10"]
+[ext_resource type="PackedScene" uid="uid://cmrtk351upw8b" path="res://Scenes/GridTiles/rock020.tscn" id="2_1070x"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Brick76C" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -7)
+
+[node name="Brick76C2" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -7)
+
+[node name="Brick76C3" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -7)
+
+[node name="Brick76C4" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -7)
+
+[node name="Brick76C5" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -7)
+
+[node name="Brick76C6" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -9)
+
+[node name="Brick76C7" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -11)
+
+[node name="Brick76C8" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -13)
+
+[node name="Brick76C9" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -11)
+
+[node name="Brick76C10" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -9)
+
+[node name="Brick76C11" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -15)
+
+[node name="Brick76C12" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -15)
+
+[node name="Brick76C13" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -15)
+
+[node name="Brick76C14" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -13)
+
+[node name="Brick76C15" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, -15)
+
+[node name="Brick76C16" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 1, -15)
+
+[node name="Brick76C17" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3, -7)
+
+[node name="Brick76C18" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 3, -7)
+
+[node name="Brick76C19" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -7)
+
+[node name="Brick76C20" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -7)
+
+[node name="Brick76C21" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 3, -7)
+
+[node name="Brick76C22" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -9)
+
+[node name="Brick76C23" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -11)
+
+[node name="Brick76C24" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -13)
+
+[node name="Brick76C25" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -11)
+
+[node name="Brick76C26" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -9)
+
+[node name="Brick76C27" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -15)
+
+[node name="Brick76C28" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3, -15)
+
+[node name="Brick76C29" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -15)
+
+[node name="Brick76C30" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -13)
+
+[node name="Brick76C31" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 3, -15)
+
+[node name="Brick76C32" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -15)
+
+[node name="Brick76C33" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, -13)
+
+[node name="Brick76C34" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, -11)
+
+[node name="Brick76C35" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, -9)
+
+[node name="Brick76C36" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, -15)
+
+[node name="Brick76C37" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, -7)
+
+[node name="Brick76C38" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 5, -13)
+
+[node name="Brick76C39" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 5, -11)
+
+[node name="Brick76C40" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 5, -9)
+
+[node name="Brick76C41" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 5, -15)
+
+[node name="Brick76C42" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 5, -7)
+
+[node name="Brick76C43" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -13)
+
+[node name="Brick76C44" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -11)
+
+[node name="Brick76C45" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -9)
+
+[node name="Brick76C46" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -15)
+
+[node name="Brick76C47" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -7)
+
+[node name="Brick76C48" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, -13)
+
+[node name="Brick76C49" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, -11)
+
+[node name="Brick76C50" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, -9)
+
+[node name="Brick76C51" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, -15)
+
+[node name="Brick76C52" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 5, -7)
+
+[node name="Brick76C53" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 5, -13)
+
+[node name="Brick76C54" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 5, -11)
+
+[node name="Brick76C55" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 5, -9)
+
+[node name="Brick76C56" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 5, -15)
+
+[node name="Brick76C57" parent="." instance=ExtResource("1_40t10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 5, -7)
+
+[node name="Rock20" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -9)
+
+[node name="Rock21" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1, -9)
+
+[node name="Rock22" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -9)
+
+[node name="Rock23" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, -9)
+
+[node name="Rock24" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -11)
+
+[node name="Rock25" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1, -11)
+
+[node name="Rock26" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, -11)
+
+[node name="Rock27" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1, -13)
+
+[node name="Rock28" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -13)
+
+[node name="Rock29" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1, -13)
+
+[node name="Rock30" parent="." instance=ExtResource("2_1070x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -7)

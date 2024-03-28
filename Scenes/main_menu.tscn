@@ -22,7 +22,7 @@ shadow_size = 10
 
 [sub_resource type="Theme" id="Theme_c22dj"]
 
-[node name="Control" type="Control"]
+[node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yamil")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="MainPanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -46,20 +47,27 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_kp3kg")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanelContainer"]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="PanelContainer/VBoxContainer"]
+[node name="PlayButton" type="Button" parent="MainPanelContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_c22dj")
 theme_override_font_sizes/font_size = 30
 text = "Play"
 
-[node name="QuitButton" type="Button" parent="PanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="OptionsButton" type="Button" parent="MainPanelContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_c22dj")
+theme_override_font_sizes/font_size = 30
+text = "Options
+"
+
+[node name="QuitButton" type="Button" parent="MainPanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "Quit"
 
-[connection signal="pressed" from="PanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]
+[connection signal="pressed" from="MainPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]
+[connection signal="pressed" from="MainPanelContainer/VBoxContainer/OptionsButton" to="." method="PlayButtonPressed"]
+[connection signal="pressed" from="MainPanelContainer/VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]

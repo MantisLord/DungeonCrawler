@@ -1,13 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://o4p1dfik2w5y"]
+[gd_scene load_steps=8 format=3 uid="uid://o4p1dfik2w5y"]
 
-[ext_resource type="Texture2D" uid="uid://bu1tm6uoilngk" path="res://Assets/Textures/Ground048_1K-PNG_Color.png" id="1_efx23"]
+[ext_resource type="Texture2D" uid="uid://dwaf702qk6sx5" path="res://Assets/Textures/Ground048/Ground048_1K-PNG_Color.png" id="1_qnifv"]
+[ext_resource type="Texture2D" uid="uid://ob46rtu71udp" path="res://Assets/Textures/Ground048/Ground048_1K-PNG_AmbientOcclusion.png" id="2_p3hf1"]
+[ext_resource type="Texture2D" uid="uid://dnv2dl83wwef3" path="res://Assets/Textures/Ground048/Ground048_1K-PNG_NormalGL.png" id="3_1gas4"]
+[ext_resource type="Texture2D" uid="uid://d1p1ah8uiejis" path="res://Assets/Textures/Ground048/Ground048_1K-PNG_Roughness.png" id="4_rfb8d"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8skhs"]
-albedo_texture = ExtResource("1_efx23")
-uv1_scale = Vector3(100, 100, 100)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6w4cy"]
+albedo_texture = ExtResource("1_qnifv")
+metallic_specular = 0.0
+roughness_texture = ExtResource("4_rfb8d")
+normal_enabled = true
+normal_texture = ExtResource("3_1gas4")
+ao_enabled = true
+ao_texture = ExtResource("2_p3hf1")
+uv1_triplanar = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_fstxj"]
-material = SubResource("StandardMaterial3D_8skhs")
+material = SubResource("StandardMaterial3D_6w4cy")
 size = Vector2(100, 100)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_q1vcj"]

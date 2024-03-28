@@ -1,0 +1,30 @@
+[gd_scene load_steps=8 format=3 uid="uid://cgvtobt3nkugj"]
+
+[ext_resource type="Texture2D" uid="uid://bgqnu3wiq3rcn" path="res://Assets/Textures/Bricks059/Bricks059_1K-PNG_Color.png" id="1_hlhl8"]
+[ext_resource type="Texture2D" uid="uid://we6g5da1xrd" path="res://Assets/Textures/Bricks059/Bricks059_1K-PNG_AmbientOcclusion.png" id="2_285t6"]
+[ext_resource type="Texture2D" uid="uid://cxws3qi4qvb8i" path="res://Assets/Textures/Bricks059/Bricks059_1K-PNG_NormalGL.png" id="3_p4gto"]
+[ext_resource type="Texture2D" uid="uid://ceihj1rb2uv2d" path="res://Assets/Textures/Bricks059/Bricks059_1K-PNG_Roughness.png" id="4_aud02"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tproy"]
+albedo_texture = ExtResource("1_hlhl8")
+roughness_texture = ExtResource("4_aud02")
+normal_enabled = true
+normal_texture = ExtResource("3_p4gto")
+ao_enabled = true
+ao_texture = ExtResource("2_285t6")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_1d076"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="Brick059" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_tproy")
+mesh = SubResource("BoxMesh_1d076")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

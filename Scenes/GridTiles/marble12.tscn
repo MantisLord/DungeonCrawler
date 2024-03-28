@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3 uid="uid://fq5hau7vawro"]
+
+[ext_resource type="Texture2D" uid="uid://2dhpaytsffax" path="res://Assets/Textures/Marble012/Marble012_1K-PNG_Color.png" id="1_jxp5j"]
+[ext_resource type="Texture2D" uid="uid://hwwlsw3wmbo0" path="res://Assets/Textures/Marble012/Marble012_1K-PNG_NormalGL.png" id="2_7y8xg"]
+[ext_resource type="Texture2D" uid="uid://bkjhasxluh5sm" path="res://Assets/Textures/Marble012/Marble012_1K-PNG_Roughness.png" id="3_f21r4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d84pp"]
+albedo_texture = ExtResource("1_jxp5j")
+metallic = 0.75
+metallic_specular = 0.75
+roughness_texture = ExtResource("3_f21r4")
+normal_enabled = true
+normal_texture = ExtResource("2_7y8xg")
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_ckusa"]
+material = SubResource("StandardMaterial3D_d84pp")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="Marble12" type="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_ckusa")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cmrtk351upw8b"]
+
+[ext_resource type="Material" uid="uid://cj0w74k0g72pd" path="res://Assets/Textures/Rock020/rock020.tres" id="1_gnbdx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_p7r1m"]
+material = ExtResource("1_gnbdx")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_c3x5g"]
+points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
+
+[node name="Rock20" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_p7r1m")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_c3x5g")

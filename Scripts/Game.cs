@@ -1,15 +1,57 @@
 using Godot;
+using Godot.Collections;
 
 public partial class Game : Node
 {
-    public const double TICK_TIME = 0.5;
+    private const float TILE_SIZE = 2.0f;
+    public const double TICK_TIME = 1.0f;
+
     private Timer moveLimitTick;
     [Signal] public delegate void TickEventHandler();
+    [Signal] public delegate void DebugLogEventHandler();
+    public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
+
+    public enum Character
+    {
+        Cyclops
+    }
+
+    public enum InteractableArea
+    {
+        None,
+        SwordPickupArea3D,
+    }
+
+    public enum Item
+    {
+        None,
+        Sword,
+        Potion
+    }
+
+    public Tween HandleMoveTween(Node3D mover, Vector3 direction, float speed)
+    {
+        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+        tween.TweenProperty(mover, "position", mover.Position + direction.Rotated(Vector3.Up, mover.Rotation.Y) * TILE_SIZE, speed);
+        tween.Play();
+        return tween;
+    }
+
+    public Tween HandleRotateTween(Node3D rotater, int shift, float speed)
+    {
+        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+        tween.TweenProperty(rotater, "rotation:y", rotater.Rotation.Y + shift * (Mathf.Pi / 2.0), speed);
+        tween.Play();
+        return tween;
+    }
+
     public override void _Ready()
     {
-        moveLimitTick = new Timer();
-        moveLimitTick.Autostart = true;
-        moveLimitTick.WaitTime = TICK_TIME;
+        moveLimitTick = new Timer
+        {
+            Autostart = true,
+            WaitTime = TICK_TIME
+        };
         moveLimitTick.Timeout += () => EmitSignal(SignalName.Tick);
         AddChild(moveLimitTick);
         base._Ready();
@@ -20,8 +62,18 @@ public partial class Game : Node
         main_menu,
         outside
     }
+
     public void ChangeScene(Scene scene)
     {
         GetTree().ChangeSceneToFile($"res://Scenes/{scene}.tscn");
+    }
+
+    public void Log(string msg)
+    {
+        Dictionary time = Time.GetTimeDictFromSystem();
+        var formattedLogText = $"{System.Environment.NewLine}{time["hour"].ToString().PadLeft(2, '0')}:{time["minute"].ToString().PadLeft(2, '0')}:{time["second"].ToString().PadLeft(2, '0')}| {msg}";
+        allLogText += formattedLogText;
+        EmitSignal(SignalName.DebugLog);
+        GD.Print(formattedLogText);
     }
 }

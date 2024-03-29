@@ -12,7 +12,7 @@ public partial class Player : Node3D
     private AudioManager audioMgr;
 
     private Label interactLabel;
-    private Label regionLabel;
+    private Label debugInfoLabel;
     private Label logLabel;
     private ScrollContainer logScroll;
 
@@ -31,7 +31,7 @@ public partial class Player : Node3D
     private bool foundItem3 = false;
 
     // ui
-    private Control menu;
+    private PanelContainer menu;
     private TextureRect item1Texture;
     private TextureRect item2Texture;
     private TextureRect item3Texture;
@@ -47,36 +47,40 @@ public partial class Player : Node3D
     private AnimationPlayer anim;
 
     public bool tookActionThisTick = false;
+    public bool swinging = false;
 
     public override void _Ready()
     {
         game = GetNode<Game>("/root/Game");
         game.DebugLog += HandleDebugLogSignal;
-        audioMgr = GetNode<AudioManager>("/root/AudioManager");
         game.Tick += () => tookActionThisTick = false;
+        audioMgr = GetNode<AudioManager>("/root/AudioManager");
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
-        interactLabel = GetNode<Label>("UserInterface/InfoLabel");
-        regionLabel = GetNode<Label>("UserInterface/SecondaryPanelContainer/VBoxContainer/RegionLabel");
-        logScroll = GetNode<ScrollContainer>("UserInterface/SecondaryPanelContainer/VBoxContainer/ScrollContainer");
+
+        menu = GetNode<PanelContainer>("UserInterface/MainMenu/MainMenuPanelContainer");
+        interactLabel = GetNode<Label>("UserInterface/InteractLabel");
+        logScroll = GetNode<ScrollContainer>("UserInterface/LogPanelContainer/ScrollContainer");
         logLabel = logScroll.GetNode<Label>("LogLabel");
+        debugInfoLabel = GetNode<Label>("UserInterface/DebugInfoPanelContainer/DebugInfoLabel");
         anim = GetNode<AnimationPlayer>("AnimationPlayer");
 
-        item1Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item1Panel");
-        item2Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item2Panel");
-        item3Panel = GetNode<PanelContainer>("UserInterface/MainPanelContainer/HBoxContainer/Item3Panel");
+        item1Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel");
+        item2Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item2Panel");
+        item3Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item3Panel");
 
-        item1Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item1Panel/Item1TextureRect");
-        item2Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item2Panel/Item2TextureRect");
-        item3Texture = GetNode<TextureRect>("UserInterface/MainPanelContainer/HBoxContainer/Item3Panel/Item3TextureRect");
+        item1Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel/Item1TextureRect");
+        item2Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item2Panel/Item2TextureRect");
+        item3Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item3Panel/Item3TextureRect");
 
         tookActionThisTick = false;
         interactLabel.Text = "";
         interactAreaType = InteractableArea.None;
         game.Log($"Entered {GetParent().Name}.");
         SetInteractKeycodeString();
+        menu.Visible = false;
         base._Ready();
     }
 
@@ -99,7 +103,7 @@ public partial class Player : Node3D
         canEquip = false;
         var style = new StyleBoxFlat
         {
-            BgColor = new Color("BLACK")
+            BgColor = new Color(0, 0, 0, 0),
         };
 
         anim.PlayBackwards($"Raise{equippedItem}");
@@ -148,9 +152,11 @@ public partial class Player : Node3D
             case Item.Sword:
                 canUse = false;
                 canEquip = false;
+                swinging = true;
                 audioMgr.Play(Audio.SwingSword, AudioChannel.SFX2);
                 anim.Play("SwingSword");
                 await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED * 2), SceneTreeTimer.SignalName.Timeout);
+                swinging = false;
                 anim.Play($"RaiseSword");
                 await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
                 canUse = true;
@@ -201,7 +207,8 @@ public partial class Player : Node3D
 
     public override void _Process(double delta)
     {
-        regionLabel.Text = $"Position (X: {System.Math.Round(Position.X,2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z,2)})" +
+        debugInfoLabel.Text = $"Map: {GetParent().Name}" +
+            $"\nPosition (X: {System.Math.Round(Position.X, 2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z, 2)})" +
             $"\nRotationDegrees {Rotation.Y}" +
             $"\nEquipped: {equippedItem}" +
             $"\nCanUse: {canUse}" +
@@ -233,6 +240,10 @@ public partial class Player : Node3D
         if (Input.IsActionJustPressed("use_item") && canUse)
         {
             UseItem();
+        }
+        if (Input.IsActionJustPressed("menu"))
+        {
+            menu.Visible = !menu.Visible;
         }
 
         if (tween != null && tween.IsRunning())

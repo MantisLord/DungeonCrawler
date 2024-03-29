@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
-[ext_resource type="PackedScene" uid="uid://it3pfbmv6ili" path="res://Scenes/main_menu.tscn" id="3_ylxxm"]
 [ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
 [ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
+[ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="5_owd4h"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -97,18 +97,18 @@ _data = {
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iswf5"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gjks"]
-bg_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cu6ox"]
+bg_color = Color(0, 0, 0, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3y167"]
-bg_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bcgxq"]
+bg_color = Color(0, 0, 0, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk0xo"]
-bg_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5o5d2"]
+bg_color = Color(0, 0, 0, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5s4hn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1bhiq"]
 content_margin_bottom = 5.0
-bg_color = Color(0, 0, 0, 1)
+bg_color = Color(0, 0, 0, 0)
 border_blend = true
 
 [node name="Player" type="Node3D"]
@@ -143,16 +143,18 @@ target_position = Vector3(1.5, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
-[node name="MainMenu" parent="." instance=ExtResource("3_ylxxm")]
-visible = false
-
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
-transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669873, 0.00937421, 0.00242358, 0.00250004, 0.692, -2.1, -0.635)
+transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669873, 0.00937422, 0.00242358, 0.00250005, 0.692, -2.1, -0.635)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_87lao")
 }
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CapsuleShape3D_iswf5")
 
 [node name="Area3D" type="Area3D" parent="."]
 
@@ -167,7 +169,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="InfoLabel" type="Label" parent="UserInterface"]
+[node name="InteractLabel" type="Label" parent="UserInterface"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -182,88 +184,101 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "PLACEHOLDER"
 
-[node name="MainPanelContainer" type="PanelContainer" parent="UserInterface"]
+[node name="StatsPanelContainer" type="PanelContainer" parent="UserInterface"]
 layout_mode = 1
 offset_right = 345.0
 offset_bottom = 60.0
 theme_override_styles/panel = ExtResource("4_yr6r6")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UserInterface/MainPanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UserInterface/StatsPanelContainer"]
 layout_mode = 2
 
-[node name="HP" type="Label" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="HP" type="Label" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 layout_mode = 2
 text = "HP:"
 
-[node name="HPProgressBar" type="ProgressBar" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="HPProgressBar" type="ProgressBar" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 value = 100.0
 
-[node name="Item" type="Label" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="Item" type="Label" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 layout_mode = 2
 text = "Item:"
 
-[node name="Item1Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="Item1Panel" type="PanelContainer" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_7gjks")
+theme_override_styles/panel = SubResource("StyleBoxFlat_cu6ox")
 
-[node name="Item1TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item1Panel"]
+[node name="Item1TextureRect" type="TextureRect" parent="UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel"]
 layout_mode = 2
 texture = ExtResource("5_8gkou")
 expand_mode = 3
 
-[node name="Item2Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="Item2Panel" type="PanelContainer" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_3y167")
+theme_override_styles/panel = SubResource("StyleBoxFlat_bcgxq")
 
-[node name="Item2TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item2Panel"]
+[node name="Item2TextureRect" type="TextureRect" parent="UserInterface/StatsPanelContainer/HBoxContainer/Item2Panel"]
 layout_mode = 2
 texture = ExtResource("5_8gkou")
 expand_mode = 3
 
-[node name="Item3Panel" type="PanelContainer" parent="UserInterface/MainPanelContainer/HBoxContainer"]
+[node name="Item3Panel" type="PanelContainer" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_wk0xo")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5o5d2")
 
-[node name="Item3TextureRect" type="TextureRect" parent="UserInterface/MainPanelContainer/HBoxContainer/Item3Panel"]
+[node name="Item3TextureRect" type="TextureRect" parent="UserInterface/StatsPanelContainer/HBoxContainer/Item3Panel"]
 layout_mode = 2
 texture = ExtResource("5_8gkou")
 expand_mode = 3
 
-[node name="SecondaryPanelContainer" type="PanelContainer" parent="UserInterface"]
-custom_minimum_size = Vector2(250, 100)
+[node name="LogPanelContainer" type="PanelContainer" parent="UserInterface"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -160.0
+offset_right = 400.0
+grow_vertical = 0
+theme_override_styles/panel = ExtResource("4_yr6r6")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UserInterface/LogPanelContainer"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1bhiq")
+
+[node name="LogLabel" type="Label" parent="UserInterface/LogPanelContainer/ScrollContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Log"
+
+[node name="DebugInfoPanelContainer" type="PanelContainer" parent="UserInterface"]
+clip_contents = true
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
+offset_left = -52.0
 offset_bottom = 40.0
 grow_horizontal = 0
 theme_override_styles/panel = ExtResource("4_yr6r6")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UserInterface/SecondaryPanelContainer"]
-layout_mode = 2
-
-[node name="RegionLabel" type="Label" parent="UserInterface/SecondaryPanelContainer/VBoxContainer"]
+[node name="DebugInfoLabel" type="Label" parent="UserInterface/DebugInfoPanelContainer"]
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 12
 text = "(X, Y, Z)"
+horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="UserInterface/SecondaryPanelContainer/VBoxContainer"]
-custom_minimum_size = Vector2(300, 150)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_5s4hn")
-
-[node name="LogLabel" type="Label" parent="UserInterface/SecondaryPanelContainer/VBoxContainer/ScrollContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Log"
+[node name="MainMenu" parent="UserInterface" instance=ExtResource("5_owd4h")]
+layout_mode = 1
 
 [connection signal="area_entered" from="Area3D" to="." method="OnArea3DEntered"]
 [connection signal="area_exited" from="Area3D" to="." method="OnArea3DExited"]

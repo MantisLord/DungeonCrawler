@@ -6,7 +6,7 @@ public partial class Game : Node
     private const float TILE_SIZE = 2.0f;
     public const double TICK_TIME = 1.0f;
 
-    private Timer moveLimitTick;
+    private Timer npcActionTick;
     [Signal] public delegate void TickEventHandler();
     [Signal] public delegate void DebugLogEventHandler();
     public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
@@ -20,6 +20,7 @@ public partial class Game : Node
     {
         None,
         SwordPickupArea3D,
+        HitboxArea3D,
     }
 
     public enum Item
@@ -31,7 +32,7 @@ public partial class Game : Node
 
     public Tween HandleMoveTween(Node3D mover, Vector3 direction, float speed)
     {
-        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.InOut);
         tween.TweenProperty(mover, "position", mover.Position + direction.Rotated(Vector3.Up, mover.Rotation.Y) * TILE_SIZE, speed);
         tween.Play();
         return tween;
@@ -39,7 +40,7 @@ public partial class Game : Node
 
     public Tween HandleRotateTween(Node3D rotater, int shift, float speed)
     {
-        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+        Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.InOut);
         tween.TweenProperty(rotater, "rotation:y", rotater.Rotation.Y + shift * (Mathf.Pi / 2.0), speed);
         tween.Play();
         return tween;
@@ -47,13 +48,13 @@ public partial class Game : Node
 
     public override void _Ready()
     {
-        moveLimitTick = new Timer
+        npcActionTick = new Timer
         {
             Autostart = true,
             WaitTime = TICK_TIME
         };
-        moveLimitTick.Timeout += () => EmitSignal(SignalName.Tick);
-        AddChild(moveLimitTick);
+        npcActionTick.Timeout += () => EmitSignal(SignalName.Tick);
+        AddChild(npcActionTick);
         base._Ready();
     }
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dmlhf37q7he5y"]
+[gd_scene load_steps=25 format=3 uid="uid://dmlhf37q7he5y"]
 
 [ext_resource type="Script" path="res://Scripts/NPC.cs" id="1_exwtv"]
 [ext_resource type="Material" uid="uid://4mm1qawccgko" path="res://Assets/Models/Cyclops/cyclops.tres" id="2_65ole"]
@@ -292,9 +292,43 @@ blend_shape_mode = 0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ujpmr"]
 albedo_texture = ExtResource("3_0gulk")
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_07fc8"]
+radius = 60.0
+height = 130.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_g5ked"]
+radius = 60.0
+height = 180.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7lphi"]
+radius = 45.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqk6r"]
+radius = 30.0
+height = 118.719
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wikta"]
+radius = 20.0
+height = 62.7033
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_rqkpo"]
+height = 20.0
+radius = 30.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e8m2p"]
+radius = 30.0
+height = 100.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_x6k0g"]
+radius = 20.0
+height = 62.3672
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fmuu8"]
+size = Vector3(75, 25, 40)
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7ldo8"]
-radius = 0.75
-height = 4.0
+radius = 0.7
+height = 2.5
 
 [node name="cyclops" type="Node3D"]
 script = ExtResource("1_exwtv")
@@ -698,6 +732,171 @@ mesh = SubResource("ArrayMesh_uebl6")
 skin = SubResource("Skin_3qc3k")
 surface_material_override/0 = SubResource("StandardMaterial3D_ujpmr")
 
+[node name="Lower Torso" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-1.14583e-14, 0.0871558, 0.996195, 1.17013e-14, 0.996195, -0.0871558, -1, 1.06581e-14, -1.24345e-14, 6.07565e-06, 33.7136, -211.169)
+bone_name = "spine1"
+bone_idx = 2
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Lower Torso"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Lower Torso/HitboxArea3D"]
+transform = Transform3D(-3.65253e-07, -0.351826, 0.936067, -0.0871562, 0.932506, 0.350487, -0.996196, -0.0815838, -0.0306641, -21.2549, 5.53167, -1.81402)
+shape = SubResource("CapsuleShape3D_07fc8")
+
+[node name="Upper Torso" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(1.22935e-07, 3.72529e-08, 1, -0.212232, 0.977219, -3.72529e-08, -0.977219, -0.212232, 1.29454e-07, 1.30196e-05, 28.6639, -268.137)
+bone_name = "spine2"
+bone_idx = 3
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Upper Torso"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Upper Torso/HitboxArea3D"]
+transform = Transform3D(-0.212233, 0.000311291, 0.97722, 0.977219, 6.75322e-05, 0.212233, 5.37709e-08, 1, -0.000318163, 26.3991, 6.55991, 8.33518)
+shape = SubResource("CapsuleShape3D_g5ked")
+
+[node name="Head" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(1.10875e-07, 1.31243e-07, 1, -0.983648, 0.180104, 5.84855e-08, -0.180104, -0.983647, 1.50479e-07, 2.12178e-05, -17, -332)
+bone_name = "head"
+bone_idx = 4
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Head"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Head/HitboxArea3D"]
+transform = Transform3D(0.999998, -9.59233e-14, 3.12924e-07, -2.98023e-08, -3.73035e-14, 1, -1.06581e-13, -1, 3.01981e-14, 20.0173, -8.74207, -2.17623)
+shape = SubResource("SphereShape3D_7lphi")
+
+[node name="Upper Left Arm" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.588665, -0.804003, -0.0839816, 0.0496123, 0.0677609, -0.996467, 0.806853, -0.590752, -1.92353e-09, -83.257, 17.2592, -309.196)
+bone_name = "arm1_L"
+bone_idx = 12
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Upper Left Arm"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Upper Left Arm/HitboxArea3D"]
+transform = Transform3D(-0.0442609, 0.996563, -0.0700547, -0.836562, 0.00135698, 0.54787, 0.546081, 0.082854, 0.833626, 32.1805, -4.79861, 3.15219)
+shape = SubResource("CapsuleShape3D_vqk6r")
+
+[node name="Lower Left Arm" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.593054, -0.741026, 0.314908, -0.196769, -0.245864, -0.949122, 0.780749, -0.624845, 4.29351e-08, -130.007, 21.1992, -245.118)
+bone_name = "arm2_L"
+bone_idx = 13
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Lower Left Arm"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Lower Left Arm/HitboxArea3D"]
+transform = Transform3D(0.0987883, 0.990167, 0.0990423, -0.601692, -0.0198375, 0.798481, 0.792593, -0.138475, 0.593816, 41.1719, 3.73915, 5.09473)
+shape = SubResource("CapsuleShape3D_wikta")
+
+[node name="Left Hand" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.0500428, -0.0356386, 0.998111, -0.813019, -0.578987, -0.0614361, 0.580082, -0.814558, -8.18466e-07, -167.193, 8.8612, -196.163)
+bone_name = "arm3_L"
+bone_idx = 14
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Left Hand"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Left Hand/HitboxArea3D"]
+transform = Transform3D(0.997893, -0.0178409, -0.0623785, 0.0641733, 0.412891, 0.908517, 0.00954672, -0.910606, 0.413165, 22.5827, -17.4689, -13.2405)
+shape = SubResource("CylinderShape3D_rqkpo")
+
+[node name="Upper Right Arm" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.588664, 0.804004, -0.0839833, 0.0496137, 0.0677617, 0.996467, 0.806854, -0.590751, -7.18166e-07, 83.257, 17.2591, -309.196)
+bone_name = "arm1_R"
+bone_idx = 27
+
+[node name="Area3D" type="Area3D" parent="Joints/Skeleton3D/Upper Right Arm"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Upper Right Arm/Area3D"]
+transform = Transform3D(-0.0555167, -0.991225, 0.119959, 0.998341, -0.0532635, 0.0219167, -0.0153348, 0.120977, 0.992543, 31.0425, -8.00505, -1.32633)
+shape = SubResource("CapsuleShape3D_vqk6r")
+
+[node name="Lower Right Arm" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.593063, 0.74102, 0.314904, -0.196769, -0.245859, 0.949124, 0.780742, -0.624854, -5.55919e-07, 130.007, 21.1993, -245.118)
+bone_name = "arm2_R"
+bone_idx = 28
+
+[node name="Area3D" type="Area3D" parent="Joints/Skeleton3D/Lower Right Arm"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Lower Right Arm/Area3D"]
+transform = Transform3D(0.0594284, -0.982374, -0.177216, 0.950572, 0.109892, -0.290399, 0.304756, -0.151199, 0.940349, 37.8086, 1.75873, -4.86605)
+shape = SubResource("CapsuleShape3D_wikta")
+
+[node name="Right Hand" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.0500148, 0.0356196, 0.998113, -0.813011, -0.579002, 0.0614022, 0.580097, -0.814547, 5.08127e-07, 167.194, 8.86128, -196.163)
+bone_name = "arm3_R"
+bone_idx = 29
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Right Hand"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Right Hand/HitboxArea3D"]
+transform = Transform3D(0.993409, 0.0594865, -0.0979926, 0.114526, -0.552134, 0.825856, -0.00497717, -0.831636, -0.555305, 19.4888, -19.7126, 12.5655)
+shape = SubResource("CylinderShape3D_rqkpo")
+
+[node name="Upper Left Leg" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.016698, -0.0585736, 0.998143, -0.273649, -0.959899, -0.0609072, 0.961685, -0.274158, -1.68337e-07, -39.6544, 52.3438, -156.116)
+bone_name = "leg1_L"
+bone_idx = 41
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Upper Left Leg"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Upper Left Leg/HitboxArea3D"]
+transform = Transform3D(0.0499545, -0.886059, 0.460874, 0.109117, 0.46353, 0.879338, -0.992773, 0.00636187, 0.119839, 37.4424, 7.63185, 1.07425)
+shape = SubResource("CapsuleShape3D_e8m2p")
+
+[node name="Lower Left Leg" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.0026514, -0.0933042, 0.995634, 0.394603, -0.914745, -0.0867747, 0.918848, 0.39311, 0.0343928, -40.9599, 30.9495, -80.93)
+bone_name = "leg2_L"
+bone_idx = 42
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Lower Left Leg"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Lower Left Leg/HitboxArea3D"]
+transform = Transform3D(0.118497, 0.956093, -0.268028, -0.46138, 0.292036, 0.837761, 0.879253, 0.0243911, 0.475729, 31.4654, -1.64999, 0.949902)
+shape = SubResource("CapsuleShape3D_x6k0g")
+
+[node name="Left Foot" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.0300655, -0.00509244, 0.999535, -0.985497, -0.166933, -0.0304938, 0.167011, -0.985955, 3.70195e-07, -41.4648, 37.8278, -12.6902)
+bone_name = "leg4_L"
+bone_idx = 44
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Left Foot"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Left Foot/HitboxArea3D"]
+transform = Transform3D(0.9904, 0.137213, 0.0167697, 0.13727, -0.990532, -0.00232479, 0.0162919, 0.00460444, -0.999857, -0.030407, -0.00514984, 1.01086)
+shape = SubResource("BoxShape3D_fmuu8")
+
+[node name="Upper Right Leg" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.016697, 0.0585739, 0.998143, -0.273648, -0.959899, 0.0609072, 0.961683, -0.274158, 1.24797e-06, 39.6544, 52.3438, -156.116)
+bone_name = "leg1_R"
+bone_idx = 46
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Upper Right Leg"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Upper Right Leg/HitboxArea3D"]
+transform = Transform3D(0.412106, -0.908976, -0.062705, 0.874144, 0.413847, -0.254169, 0.256984, 0.0499311, 0.965125, 39.322, 2.58217, 2.12883)
+shape = SubResource("CapsuleShape3D_e8m2p")
+
+[node name="Lower Right Leg" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(-0.00265163, -0.00617189, -0.999978, 0.394604, 0.918827, -0.00671738, 0.918846, -0.394612, -8.71746e-07, 40.9599, 30.9495, -80.9299)
+bone_name = "leg2_R"
+bone_idx = 47
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Lower Right Leg"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Lower Right Leg/HitboxArea3D"]
+transform = Transform3D(0.0666927, -0.985631, 0.155184, 0.399346, 0.168899, 0.901108, -0.914371, 0.00187495, 0.404872, 28.5547, 2.99742, -0.176071)
+shape = SubResource("CapsuleShape3D_x6k0g")
+
+[node name="Right Foot" type="BoneAttachment3D" parent="Joints/Skeleton3D"]
+transform = Transform3D(0.0300628, 0.00509154, 0.999535, -0.985497, -0.166934, 0.0304909, 0.16701, -0.985953, -8.40207e-07, 41.4649, 37.8278, -12.6899)
+bone_name = "leg4_R"
+bone_idx = 49
+
+[node name="HitboxArea3D" type="Area3D" parent="Joints/Skeleton3D/Right Foot"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Joints/Skeleton3D/Right Foot/HitboxArea3D"]
+transform = Transform3D(0.992602, -0.121413, 0.000840988, 0.121416, 0.992595, -0.00361411, -0.000395961, 0.00368944, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_fmuu8")
+
 [node name="Controllers" type="Node3D" parent="."]
 transform = Transform3D(0.01, 0, 0, 0, 0, -0.01, 0, 0.01, 0, 0, 0, 0)
 
@@ -822,7 +1021,9 @@ stream = ExtResource("5_4leho")
 [node name="AttackAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+visible = false
 shape = SubResource("CapsuleShape3D_7ldo8")

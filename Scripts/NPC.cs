@@ -5,8 +5,8 @@ using static Game;
 
 public partial class NPC : Node3D
 {
-    [Export] public int maxHealth = 10;
-    [Export] public int currentHealth = 10;
+    [Export] public int maxHealth = 50;
+    [Export] public int currentHealth = 50;
     [Export] public string name = "Cyclops";
     [Export] public Character character = Character.Cyclops;
     [Export] public float moveSpeed = 0.5f;
@@ -20,7 +20,6 @@ public partial class NPC : Node3D
 
     private Game game;
     private AudioStreamPlayer3D stepAudio;
-    private NavigationAgent3D navAgent;
     private AnimationTree animTree;
     private AnimationNodeStateMachinePlayback stateMachine;
     private AnimationPlayer anim;
@@ -34,6 +33,8 @@ public partial class NPC : Node3D
     private RayCast3D leftRay;
     private RayCast3D rightRay;
     private Timer stateEndTimer;
+    private GpuParticles3D bloodInstance = new();
+    private PackedScene blood = GD.Load<PackedScene>("res://Scenes/blood_particles.tscn");
 
     public enum Animation
     {
@@ -308,9 +309,30 @@ public partial class NPC : Node3D
                 stateEndTimer.Start();
                 game.Log($"{name} wandering for {stateEndTimer.TimeLeft} secs.");
                 break;
+            case State.Dead:
+                game.Log($"{name} died.");
+                break;
         }
         currentState = newState;
         PlayAnimForCurrentState();
+    }
+
+    public void TriggerHitEmission(Vector3 point)
+    {
+        bloodInstance = blood.Instantiate<GpuParticles3D>();
+        bloodInstance.GlobalPosition = point;
+        bloodInstance.Emitting = true;
+        GetTree().Root.AddChild(bloodInstance);
+    }
+
+    public void ReceiveHit(Node3D attacker, Area3D hitArea, int damageDealt)
+    {
+        currentHealth -= damageDealt;
+        game.Log($"{attacker.Name} hit {name}'s {hitArea.GetParent().Name} and dealt {damageDealt} damage! {name} has {currentHealth} HP remaining.");
+        if (currentHealth <= 0)
+        {
+            SetState(State.Dead);
+        }
     }
 
     public override void _Process(double delta)

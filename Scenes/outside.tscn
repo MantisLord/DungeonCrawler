@@ -51,9 +51,6 @@ ao_texture = ExtResource("6_sa3i3")
 
 [node name="Outside" type="Node3D"]
 
-[node name="Player" parent="." instance=ExtResource("1_wilet")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ve0dc")
 
@@ -682,3 +679,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 3, -10)
 material_override = SubResource("StandardMaterial3D_dlox1")
 use_collision = true
 size = Vector3(10, 6, 10)
+
+[node name="cyclops2" parent="." instance=ExtResource("15_u1rip")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.001, 10)
+maxHealth = 10
+currentHealth = 10
+wander = false
+
+[node name="Player" parent="." instance=ExtResource("1_wilet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

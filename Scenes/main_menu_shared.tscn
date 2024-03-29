@@ -1,0 +1,96 @@
+[gd_scene load_steps=4 format=3 uid="uid://cyx4c3b17w3il"]
+
+[ext_resource type="Script" path="res://Scripts/MainMenu.cs" id="1_mihip"]
+[ext_resource type="StyleBox" uid="uid://dlfxicg1hhlxe" path="res://Assets/Styles/menuPanel.tres" id="2_rob53"]
+
+[sub_resource type="Theme" id="Theme_c22dj"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mihip")
+
+[node name="MainMenuPanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -89.0
+offset_right = 100.0
+offset_bottom = 89.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_rob53")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenuPanelContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_c22dj")
+theme_override_font_sizes/font_size = 30
+text = "Play"
+
+[node name="OptionsButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_c22dj")
+theme_override_font_sizes/font_size = 30
+text = "Options
+"
+
+[node name="QuitButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Quit"
+
+[node name="OptionsPanelContainer" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_rob53")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OptionsPanelContainer"]
+layout_mode = 2
+
+[node name="MoveStyleCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Teleport style movement"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="OptionsPanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="FOVLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "FOV"
+
+[node name="FOVHSlider" type="HSlider" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+
+[node name="BackButton" type="Button" parent="OptionsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]
+[connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/OptionsButton" to="." method="OptionsButtonPressed"]
+[connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]
+[connection signal="pressed" from="OptionsPanelContainer/VBoxContainer/BackButton" to="." method="BackButtonPressed"]

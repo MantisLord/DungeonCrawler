@@ -116,7 +116,23 @@ public partial class Player : Node3D
         game.Log($"Entered {GetParent().Name}.");
         SetInteractKeycodeString();
         menu.Visible = false;
+        InitUI();
         base._Ready();
+    }
+
+    private void InitUI()
+    {
+        if (game.foundItem1)
+        {
+            item1Texture.Texture = swordTexture;
+        }
+        if (game.foundItem2)
+        {
+            item2Texture.Texture = torchTexture;
+        }
+        if (game.foundItem3)
+        {
+        }
     }
 
     private void AddItem(Item item)

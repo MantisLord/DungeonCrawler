@@ -55,6 +55,15 @@ public partial class NPC : Node3D
     private AudioStreamPlayer3D deathAudio;
     private AudioStreamPlayer3D aggroAudio;
 
+    private MeshInstance3D visionDebugMesh;
+
+    private MeshInstance3D cyclopsMesh1;
+    private MeshInstance3D cyclopsMesh2;
+    private MeshInstance3D cyclopsMesh3;
+    private MeshInstance3D cyclopsMesh4;
+    private MeshInstance3D cyclopsMesh5;
+    private MeshInstance3D cyclopsMesh6;
+
     public enum Animation
     {
         // Cyclops
@@ -172,8 +181,19 @@ public partial class NPC : Node3D
 
         visionArea = GetNode<Area3D>("Joints/Skeleton3D/Eye/VisionArea3D");
         visionRayCast = GetNode<RayCast3D>("StaticBody3D/VisionRayCast3D");
+        visionDebugMesh = visionArea.GetNode<MeshInstance3D>("VisionMeshInstance3D");
+
+        cyclopsMesh1 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n1_low");
+        cyclopsMesh2 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n2_low");
+        cyclopsMesh3 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n3_low");
+        cyclopsMesh4 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n4_low");
+        cyclopsMesh5 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n5_low");
+        cyclopsMesh6 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n6_low");
 
         rand.Randomize();
+
+        RandomizeSkin();
+
         stateEndTimer = new()
         {
             OneShot = true
@@ -188,6 +208,21 @@ public partial class NPC : Node3D
         visionCheckTimer.Timeout += HandleVisionCheckTimerTimeout;
         AddChild(stateEndTimer);
         AddChild(visionCheckTimer);
+    }
+
+    private void RandomizeSkin()
+    {
+        if (rand.RandiRange(0, 1) == 1)
+        {
+            string path = "res://Assets/Models/Cyclops/cyclops2.tres";
+            var newSkinMaterial = ResourceLoader.Load(path, "StandardMaterial3D") as StandardMaterial3D;
+            cyclopsMesh1.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+            cyclopsMesh2.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+            cyclopsMesh3.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+            cyclopsMesh4.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+            cyclopsMesh5.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+            cyclopsMesh6.SetSurfaceOverrideMaterial(0, newSkinMaterial);
+        }
     }
 
     private bool CanPerformMoveAction(MoveAction action)
@@ -282,7 +317,7 @@ public partial class NPC : Node3D
                 float calcDegrees = NormalizeDegrees(visionRayCast.Rotation.Y);
                 string calcCardinal = GetCardinalDirectionFromNormalizedDegrees(calcDegrees);
 
-                float bufferAmount = 45;
+                float bufferAmount = 44.9f;
 
                 //     360
                 //90    o    270
@@ -443,7 +478,8 @@ public partial class NPC : Node3D
             {
                 var overlapParent = overlap.GetParent();
 
-                //game.Log($"I SEE PT1 {overlap.Name} | {overlapParent.Name} | {overlapParent.GetParent().Name}", true);
+                if (overlap.Name == "Player" || overlapParent.Name == "Player" || overlapParent.GetParent().Name == "Player")
+                    game.Log($"I SEE YOU - PT1", true);
 
                 if (overlapParent.GetType() == typeof(Player))
                 {
@@ -458,7 +494,8 @@ public partial class NPC : Node3D
 
                         // consider configuring collision layers here instead of explicit check
 
-                        //game.Log($"I SEE PT2 {collider.GetClass()} | {colliderParent.Name}", true);
+                        if (overlap.Name == "Player" || overlapParent.Name == "Player" || overlapParent.GetParent().Name == "Player")
+                            game.Log($"I SEE YOU! - PT2", true);
 
                         if (colliderParent.GetType() == typeof(Player))
                         {
@@ -503,6 +540,7 @@ public partial class NPC : Node3D
     {
         navAgent.DebugEnabled = game.debugMode;
         debugLabel.Visible = game.debugMode;
+        visionDebugMesh.Visible = game.debugMode;
         if (followTarget != null)
         {
             navAgent.TargetPosition = followTarget.GlobalTransform.Origin;

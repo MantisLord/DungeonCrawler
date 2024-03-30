@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnee752sfib5k"]
+[gd_scene load_steps=8 format=3 uid="uid://cnee752sfib5k"]
 
 [ext_resource type="PackedScene" uid="uid://dd5dc1mpaotp4" path="res://Scenes/scene_transition_area.tscn" id="4_fxqa8"]
+[ext_resource type="PackedScene" uid="uid://82j4tkqupkqi" path="res://Assets/Models/Door/door.tscn" id="5_pqgd5"]
 [ext_resource type="PackedScene" uid="uid://077fp6hi7wle" path="res://Scenes/player.tscn" id="8_ht7at"]
 [ext_resource type="PackedScene" uid="uid://b2b1n2xrl3c56" path="res://Scenes/GridTiles/brick69.tscn" id="10_a73gm"]
 [ext_resource type="PackedScene" uid="uid://o4p1dfik2w5y" path="res://Scenes/ground.tscn" id="11_qxvif"]
@@ -627,3 +628,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, 0)
 
 [node name="SceneTransition" parent="." instance=ExtResource("4_fxqa8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0223488, -0.000999762, 45.6765)
+
+[node name="Door" parent="." instance=ExtResource("5_pqgd5")]
+transform = Transform3D(0.004, 0, 0, 0, 0.004, 0, 0, 0, 0.004, 0, 0, 47)

@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cyx4c3b17w3il"]
+[gd_scene load_steps=5 format=3 uid="uid://cyx4c3b17w3il"]
 
 [ext_resource type="Script" path="res://Scripts/MainMenu.cs" id="1_mihip"]
 [ext_resource type="StyleBox" uid="uid://dlfxicg1hhlxe" path="res://Assets/Styles/menuPanel.tres" id="2_rob53"]
+[ext_resource type="FontFile" uid="uid://cv3vn1d8xm048" path="res://Assets/Font/DIOGENES.ttf" id="3_q78nl"]
 
 [sub_resource type="Theme" id="Theme_c22dj"]
 
@@ -36,18 +37,21 @@ layout_mode = 2
 [node name="PlayButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_c22dj")
+theme_override_fonts/font = ExtResource("3_q78nl")
 theme_override_font_sizes/font_size = 30
 text = "Play"
 
 [node name="OptionsButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_c22dj")
+theme_override_fonts/font = ExtResource("3_q78nl")
 theme_override_font_sizes/font_size = 30
 text = "Options
 "
 
 [node name="QuitButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_q78nl")
 theme_override_font_sizes/font_size = 30
 text = "Quit"
 
@@ -72,6 +76,7 @@ layout_mode = 2
 
 [node name="ControlsLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "Controls:
 WASD - Forward/StrafeRight/StrafeLeft/Back
 QE - RotateLeft/RotateRight
@@ -83,11 +88,13 @@ Escape - Hide/Show Menu"
 [node name="MoveStyleCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 1
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "Teleport style movement"
 
 [node name="DebugModeCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 1
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "Debug mode"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="OptionsPanelContainer/VBoxContainer"]
@@ -95,6 +102,7 @@ layout_mode = 2
 
 [node name="FOVLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "FOV"
 
 [node name="FOVHSlider" type="HSlider" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
@@ -108,11 +116,13 @@ value = 75.0
 
 [node name="FOVSettingDisplayLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "075"
 
 [node name="BackButton" type="Button" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 1
+theme_override_fonts/font = ExtResource("3_q78nl")
 text = "Back"
 
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]

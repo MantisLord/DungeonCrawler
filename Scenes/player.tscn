@@ -1,9 +1,10 @@
-[gd_scene load_steps=47 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=48 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
 [ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
 [ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
+[ext_resource type="FontFile" uid="uid://cv3vn1d8xm048" path="res://Assets/Font/DIOGENES.ttf" id="5_f3r1y"]
 [ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="5_owd4h"]
 [ext_resource type="AudioStream" uid="uid://c7nl6n81155sf" path="res://Assets/Audio/interactSuccess.wav" id="6_sd0j0"]
 [ext_resource type="AudioStream" uid="uid://bue8hemmkb3bb" path="res://Assets/Audio/Step/step.wav" id="7_th3ra"]
@@ -276,6 +277,7 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 theme_override_font_sizes/font_size = 32
 text = "
 
@@ -295,6 +297,7 @@ offset_right = 56.5
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 text = "PLACEHOLDER"
 
 [node name="StatsPanelContainer" type="PanelContainer" parent="UserInterface"]
@@ -308,17 +311,20 @@ layout_mode = 2
 
 [node name="HP" type="Label" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 text = "HP:"
 
 [node name="HPProgressBar" type="ProgressBar" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 step = 1.0
 value = 100.0
 rounded = true
 
 [node name="Item" type="Label" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 text = "Item:"
 
 [node name="Item1Panel" type="PanelContainer" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
@@ -370,6 +376,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_1bhiq")
 
 [node name="LogLabel" type="Label" parent="UserInterface/LogPanelContainer/ScrollContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
 theme_override_font_sizes/font_size = 12
 text = "Log"
 

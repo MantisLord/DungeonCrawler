@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" load_steps=7 format=3 uid="uid://bu551kq8nsh0u"]
+
+[ext_resource type="Texture2D" uid="uid://c07h4krn83p75" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_BaseColor.png" id="1_t05fy"]
+[ext_resource type="Texture2D" uid="uid://bs6ucnx6ew0um" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_ambient_occlusion.png" id="2_dho4e"]
+[ext_resource type="Texture2D" uid="uid://y561a2bj1qou" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_Emissive.png" id="3_cildr"]
+[ext_resource type="Texture2D" uid="uid://dyu4335ncxqy" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_Metallic.png" id="4_s6ks8"]
+[ext_resource type="Texture2D" uid="uid://iiysnv3q83kl" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_Normal.png" id="5_qtfoo"]
+[ext_resource type="Texture2D" uid="uid://cd56e8pga3bii" path="res://Assets/Models/Cyclops/T_Cyclops_skin2_Roughness.png" id="6_72ggm"]
+
+[resource]
+albedo_texture = ExtResource("1_t05fy")
+metallic = 1.0
+metallic_texture = ExtResource("4_s6ks8")
+roughness_texture = ExtResource("6_72ggm")
+emission_enabled = true
+emission_texture = ExtResource("3_cildr")
+normal_enabled = true
+normal_texture = ExtResource("5_qtfoo")
+ao_enabled = true
+ao_texture = ExtResource("2_dho4e")

@@ -1,5 +1,7 @@
 using Godot;
+using System;
 using static Game;
+using static NPC;
 
 public partial class Player : Node3D
 {
@@ -20,10 +22,6 @@ public partial class Player : Node3D
     private bool canUse = false;
     private bool canEquip = true;
 
-    private bool foundItem1 = false;
-    private bool foundItem2 = false;
-    private bool foundItem3 = false;
-
     // ui
     private PanelContainer menu;
     private TextureRect item1Texture;
@@ -42,6 +40,7 @@ public partial class Player : Node3D
     private Label gameOverLabel;
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
+    private Texture2D torchTexture = GD.Load<Texture2D>("res://Assets/Textures/item_torch.png");
 
     private string keycodeString;
     private InteractableArea interactAreaType;
@@ -49,6 +48,8 @@ public partial class Player : Node3D
     private AnimationPlayer anim;
 
     private int health = 100;
+
+    private Node3D torchLight;
 
     private AudioStreamPlayer3D interactAudio;
     private AudioStreamPlayer3D stepAudio;
@@ -78,6 +79,8 @@ public partial class Player : Node3D
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
         anim = GetNode<AnimationPlayer>("AnimationPlayer");
+
+        torchLight = GetNode<Node3D>("Torch/Light");
 
         menu = GetNode<PanelContainer>("UserInterface/MainMenu/MainMenuPanelContainer");
         interactLabel = GetNode<Label>("UserInterface/InteractLabel");
@@ -123,8 +126,14 @@ public partial class Player : Node3D
             case Item.Sword:
                 item1Texture.Texture = swordTexture;
                 interactAudio.Play();
-                game.Log($"Picked up {Item.Sword}.");
-                foundItem1 = true;
+                game.Log($"Picked up {Item.Sword}. Use this weapon to slay your foes!");
+                game.foundItem1 = true;
+                break;
+            case Item.Torch:
+                item2Texture.Texture = torchTexture;
+                interactAudio.Play();
+                game.Log($"Picked up {Item.Torch}. May this tool guide your path.");
+                game.foundItem2 = true;
                 break;
         }
     }
@@ -142,8 +151,17 @@ public partial class Player : Node3D
         switch (equippedItem)
         {
             case Item.Sword:
-                swordSheathAudio.Play();
                 item1Panel.AddThemeStyleboxOverride("panel", style);
+                swordSheathAudio.Play();
+                break;
+            case Item.Torch:
+                item2Panel.AddThemeStyleboxOverride("panel", style);
+                if (torchLight.Visible)
+                {
+                    torchExtinguishAudio.Play();
+                    torchLoopAudio.Stop();
+                }
+                torchLight.Visible = false;
                 break;
         }
         game.Log($"Unequipped {equippedItem}.");
@@ -155,18 +173,23 @@ public partial class Player : Node3D
     {
         canUse = false;
         canEquip = false;
+        var style = new StyleBoxFlat
+        {
+            BgColor = new Color("YELLOW")
+        };
+        style.SetCornerRadiusAll(20);
+
         if (newItem != Item.None)
         {
             switch (newItem)
             {
                 case Item.Sword:
                     swordUnsheathAudio.Play();
-                    var style = new StyleBoxFlat
-                    {
-                        BgColor = new Color("YELLOW")
-                    };
-                    style.SetCornerRadiusAll(20);
                     item1Panel.AddThemeStyleboxOverride("panel", style);
+                    break;
+                case Item.Torch:
+                    // take out unlit torch sound here
+                    item2Panel.AddThemeStyleboxOverride("panel", style);
                     break;
             }
             anim.Play($"Raise{newItem}");
@@ -196,6 +219,19 @@ public partial class Player : Node3D
                 canUse = true;
                 canEquip = true;
                 break;
+            case Item.Torch:
+                torchLight.Visible = !torchLight.Visible;
+                if (torchLight.Visible)
+                {
+                    torchLightAudio.Play();
+                    torchLoopAudio.Play();
+                }
+                else
+                {
+                    torchExtinguishAudio.Play();
+                    torchLoopAudio.Stop();
+                }
+                break;
         }
     }
 
@@ -208,12 +244,13 @@ public partial class Player : Node3D
 
     private void OnArea3DEntered(Area3D area)
     {
-        if (area.Name == InteractableArea.SwordPickupArea3D.ToString())
+        if (area.Name == InteractableArea.SwordPickupArea3D.ToString() ||
+            area.Name == InteractableArea.TorchPickupArea3D.ToString())
         {
-            interactAreaType = InteractableArea.SwordPickupArea3D;
+            interactAreaType = area.Name == InteractableArea.SwordPickupArea3D.ToString() ? InteractableArea.SwordPickupArea3D : InteractableArea.TorchPickupArea3D;
             interactAreaParent = area.GetParent<Node3D>();
 
-            interactLabel.Text = $"Press [{keycodeString}] to pick up sword!";
+            interactLabel.Text = $"Press [{keycodeString}] to pick up {area.Name.ToString().Replace("PickupArea3D","")}!";
         }
         else if (area.Name == InteractableArea.SceneTransitionArea3D.ToString())
         {
@@ -229,7 +266,8 @@ public partial class Player : Node3D
     private void OnArea3DExited(Area3D area)
     {
         if (area.Name == InteractableArea.SwordPickupArea3D.ToString() ||
-            area.Name == InteractableArea.SceneTransitionArea3D.ToString())
+            area.Name == InteractableArea.SceneTransitionArea3D.ToString() ||
+            area.Name == InteractableArea.TorchPickupArea3D.ToString())
         {
             interactLabel.Text = "";
             interactAreaType = InteractableArea.None;
@@ -246,6 +284,10 @@ public partial class Player : Node3D
                 break;
             case InteractableArea.SwordPickupArea3D:
                 AddItem(Item.Sword);
+                interactAreaParent.QueueFree();
+                break;
+            case InteractableArea.TorchPickupArea3D:
+                AddItem(Item.Torch);
                 interactAreaParent.QueueFree();
                 break;
             case InteractableArea.SceneTransitionArea3D:
@@ -307,11 +349,12 @@ public partial class Player : Node3D
         {
             Interact();
         }
-        if (Input.IsActionJustPressed("equip_item1") && foundItem1 && canEquip)
+        if (Input.IsActionJustPressed("equip_item1") && game.foundItem1 && canEquip)
         {
             switch (equippedItem)
             {
                 case Item.Sword:
+                case Item.Torch:
                     UnequipItem();
                     break;
                 case Item.None:
@@ -319,8 +362,18 @@ public partial class Player : Node3D
                     break;
             }
         }
-        if (Input.IsActionJustPressed("equip_item2"))
+        if (Input.IsActionJustPressed("equip_item2") && game.foundItem2 && canEquip)
         {
+            switch (equippedItem)
+            {
+                case Item.Sword:
+                case Item.Torch:
+                    UnequipItem();
+                    break;
+                case Item.None:
+                    EquipItem(Item.Torch);
+                    break;
+            }
         }
         if (Input.IsActionJustPressed("equip_item3"))
         {

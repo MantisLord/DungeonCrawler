@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=47 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
@@ -28,6 +28,7 @@
 [ext_resource type="AudioStream" uid="uid://d4gygso5qvt0g" path="res://Assets/Audio/Sword/Swing/Sword Attack 2.ogg" id="23_ujwgm"]
 [ext_resource type="AudioStream" uid="uid://ca2i0v8a2rm78" path="res://Assets/Audio/Sword/Swing/Sword Attack 3.ogg" id="24_xhdtg"]
 [ext_resource type="AudioStream" uid="uid://biw1si77cmsx4" path="res://Assets/Audio/Sword/Swing/sword_swing.wav" id="25_wmhyp"]
+[ext_resource type="PackedScene" uid="uid://buly4scxuj61m" path="res://Assets/Models/Torch/torch.tscn" id="29_5e60y"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -111,10 +112,27 @@ tracks/1/keys = {
 "values": [Vector3(0.0670375, 1.31753, 2.87126), Vector3(1.5708, 1.5708, 1.5708), Vector3(1.0472, 1.5708, 0.785398)]
 }
 
+[sub_resource type="Animation" id="Animation_v240c"]
+resource_name = "RaiseTorch"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Torch:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.692, -2, -0.635), Vector3(2, -1, -2)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_87lao"]
 _data = {
 "RESET": SubResource("Animation_7wxft"),
 "RaiseSword": SubResource("Animation_6erxf"),
+"RaiseTorch": SubResource("Animation_v240c"),
 "SwingSword": SubResource("Animation_0gtdv")
 }
 
@@ -221,6 +239,9 @@ target_position = Vector3(-1.5, 0, 0)
 
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
 transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669874, 0.00937422, 0.00242358, 0.00250005, 0.692, -2.1, -0.635)
+
+[node name="Torch" parent="." instance=ExtResource("29_5e60y")]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.692, -2, -0.635)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

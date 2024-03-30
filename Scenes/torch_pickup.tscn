@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://d82shcw6lrk6"]
+
+[ext_resource type="PackedScene" uid="uid://buly4scxuj61m" path="res://Assets/Models/Torch/torch.tscn" id="1_j4u5j"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dpwq6"]
+size = Vector3(2, 2, 2)
+
+[node name="TorchPickup" type="Node3D"]
+
+[node name="TorchPickupArea3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TorchPickupArea3D"]
+shape = SubResource("BoxShape3D_dpwq6")
+
+[node name="Torch" parent="." instance=ExtResource("1_j4u5j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

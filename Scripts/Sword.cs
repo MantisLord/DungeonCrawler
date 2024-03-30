@@ -13,7 +13,8 @@ public partial class Sword : Node3D
     public override void _Ready()
 	{
         game = GetNode<Game>("/root/Game");
-        player = GetParent<Player>();
+        if (GetParent().GetType() == typeof(Player))
+            player = GetParent<Player>();
         hitEmissionPoint = GetNode<Node3D>("HitEmissionPoint");
         rand.Randomize();
     }

@@ -14,6 +14,10 @@ public partial class Game : Node
     public Scene currentScene = Scene.main_menu;
     public bool gameOver = false;
 
+    public bool foundItem1 = false;
+    public bool foundItem2 = false;
+    public bool foundItem3 = false;
+
     // menu settings
     public bool debugMode = true;
     public float fov = 75;
@@ -60,13 +64,15 @@ public partial class Game : Node
         SwordPickupArea3D,
         HitboxArea3D,
         SceneTransitionArea3D,
+        TorchPickupArea3D
     }
 
     public enum Item
     {
         None,
         Sword,
-        Potion
+        Potion,
+        Torch,
     }
 
     public Tween HandleMoveTween(Node3D mover, Vector3 direction, float speed)

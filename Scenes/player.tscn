@@ -1,10 +1,33 @@
-[gd_scene load_steps=17 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=45 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
 [ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
 [ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
 [ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="5_owd4h"]
+[ext_resource type="AudioStream" uid="uid://c7nl6n81155sf" path="res://Assets/Audio/interactSuccess.wav" id="6_sd0j0"]
+[ext_resource type="AudioStream" uid="uid://bue8hemmkb3bb" path="res://Assets/Audio/Step/step.wav" id="7_th3ra"]
+[ext_resource type="AudioStream" uid="uid://2pxvl5omy8wb" path="res://Assets/Audio/Step/Stone Run 1.ogg" id="8_41rpm"]
+[ext_resource type="AudioStream" uid="uid://cwx7rj4vcv4s8" path="res://Assets/Audio/Step/Stone Run 2.ogg" id="9_8u06r"]
+[ext_resource type="AudioStream" uid="uid://8vvs6tcxmccj" path="res://Assets/Audio/Step/Stone Run 3.ogg" id="10_s68xy"]
+[ext_resource type="AudioStream" uid="uid://d2kcxihdr33rk" path="res://Assets/Audio/Step/Stone Run 4.ogg" id="11_qml7j"]
+[ext_resource type="AudioStream" uid="uid://b2un6dr4gsaal" path="res://Assets/Audio/Step/Stone Run 5.ogg" id="12_fjr7b"]
+[ext_resource type="AudioStream" uid="uid://credlge7ofxm2" path="res://Assets/Audio/Sword/Unsheath/Sword Unsheath 1.ogg" id="13_lspke"]
+[ext_resource type="AudioStream" uid="uid://c57taqv24kj3d" path="res://Assets/Audio/Sword/Unsheath/Sword Unsheath 2.ogg" id="14_kwuf8"]
+[ext_resource type="AudioStream" uid="uid://dgb8ksxerkfek" path="res://Assets/Audio/Sword/Unsheath/sword_draw.mp3" id="15_b0pha"]
+[ext_resource type="AudioStream" uid="uid://ilptt0ycueph" path="res://Assets/Audio/Sword/Sheath/sword_sheath.wav" id="16_kv4wv"]
+[ext_resource type="AudioStream" uid="uid://bf81ql72ijut6" path="res://Assets/Audio/Sword/Sheath/Sword Sheath 1.ogg" id="17_ui8ra"]
+[ext_resource type="AudioStream" uid="uid://dncp8wn86i8t5" path="res://Assets/Audio/Sword/Sheath/Sword Sheath 2.ogg" id="18_j6ty4"]
+[ext_resource type="AudioStream" uid="uid://cgy61xlb3cxjm" path="res://Assets/Audio/Sword/Hit/Sword Impact Hit 1.ogg" id="19_bhdgk"]
+[ext_resource type="AudioStream" uid="uid://bf87qk1v21vrx" path="res://Assets/Audio/Torch/Light Torch 1.wav" id="19_u1q1e"]
+[ext_resource type="AudioStream" uid="uid://dw17dup4cav56" path="res://Assets/Audio/Torch/Extinguish Torch.wav" id="20_3n1ee"]
+[ext_resource type="AudioStream" uid="uid://6ujfi11gobex" path="res://Assets/Audio/Sword/Hit/Sword Impact Hit 2.ogg" id="20_tnufk"]
+[ext_resource type="AudioStream" uid="uid://dfn4p1263rrb1" path="res://Assets/Audio/Torch/Torch Loop.wav" id="21_n845t"]
+[ext_resource type="AudioStream" uid="uid://dutm4i62kq874" path="res://Assets/Audio/Sword/Hit/Sword Impact Hit 3.ogg" id="21_r810a"]
+[ext_resource type="AudioStream" uid="uid://mvbc0yl74017" path="res://Assets/Audio/Sword/Swing/Sword Attack 1.ogg" id="22_ytpr6"]
+[ext_resource type="AudioStream" uid="uid://d4gygso5qvt0g" path="res://Assets/Audio/Sword/Swing/Sword Attack 2.ogg" id="23_ujwgm"]
+[ext_resource type="AudioStream" uid="uid://ca2i0v8a2rm78" path="res://Assets/Audio/Sword/Swing/Sword Attack 3.ogg" id="24_xhdtg"]
+[ext_resource type="AudioStream" uid="uid://biw1si77cmsx4" path="res://Assets/Audio/Sword/Swing/sword_swing.wav" id="25_wmhyp"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -111,6 +134,59 @@ content_margin_bottom = 5.0
 bg_color = Color(0, 0, 0, 0)
 border_blend = true
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_qbwsy"]
+streams_count = 6
+stream_0/stream = ExtResource("7_th3ra")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("8_41rpm")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("9_8u06r")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("10_s68xy")
+stream_3/weight = 1.0
+stream_4/stream = ExtResource("11_qml7j")
+stream_4/weight = 1.0
+stream_5/stream = ExtResource("12_fjr7b")
+stream_5/weight = 1.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_2fkah"]
+streams_count = 3
+stream_0/stream = ExtResource("13_lspke")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("14_kwuf8")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("15_b0pha")
+stream_2/weight = 1.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_wfxos"]
+streams_count = 3
+stream_0/stream = ExtResource("16_kv4wv")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("17_ui8ra")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("18_j6ty4")
+stream_2/weight = 1.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_cyv4k"]
+streams_count = 3
+stream_0/stream = ExtResource("19_bhdgk")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("20_tnufk")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("21_r810a")
+stream_2/weight = 1.0
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_cvobd"]
+streams_count = 4
+stream_0/stream = ExtResource("22_ytpr6")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("23_ujwgm")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("24_xhdtg")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("25_wmhyp")
+stream_3/weight = 1.0
+
 [node name="Player" type="Node3D"]
 script = ExtResource("1_sig3l")
 
@@ -169,6 +245,22 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="GameOverLabel" type="Label" parent="UserInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 32
+text = "
+
+
+GAME OVER - WHAT HAPPENED"
+
 [node name="InteractLabel" type="Label" parent="UserInterface"]
 layout_mode = 1
 anchors_preset = 8
@@ -200,7 +292,9 @@ text = "HP:"
 [node name="HPProgressBar" type="ProgressBar" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+step = 1.0
 value = 100.0
+rounded = true
 
 [node name="Item" type="Label" parent="UserInterface/StatsPanelContainer/HBoxContainer"]
 layout_mode = 2
@@ -279,6 +373,47 @@ horizontal_alignment = 1
 
 [node name="MainMenu" parent="UserInterface" instance=ExtResource("5_owd4h")]
 layout_mode = 1
+
+[node name="HitRect" type="ColorRect" parent="UserInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 0.196078)
+
+[node name="InteractAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_sd0j0")
+
+[node name="StepAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_qbwsy")
+
+[node name="SwordUnsheathAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_2fkah")
+
+[node name="SwordSheathAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_wfxos")
+
+[node name="SwordHitAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_cyv4k")
+
+[node name="SwordSwingAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_cvobd")
+
+[node name="TorchLightAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("19_u1q1e")
+
+[node name="TorchExtinguishAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("20_3n1ee")
+
+[node name="TorchLoopAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("21_n845t")
+
+[node name="ReceiveHitAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+
+[node name="DeathAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 
 [connection signal="area_entered" from="Area3D" to="." method="OnArea3DEntered"]
 [connection signal="area_exited" from="Area3D" to="." method="OnArea3DExited"]

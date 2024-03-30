@@ -82,10 +82,12 @@ Escape - Hide/Show Menu"
 
 [node name="MoveStyleCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 1
 text = "Teleport style movement"
 
 [node name="DebugModeCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 1
 text = "Debug mode"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="OptionsPanelContainer/VBoxContainer"]
@@ -99,6 +101,7 @@ text = "FOV"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
+focus_mode = 1
 min_value = 1.0
 max_value = 179.0
 value = 75.0
@@ -109,6 +112,7 @@ text = "075"
 
 [node name="BackButton" type="Button" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 1
 text = "Back"
 
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://it3pfbmv6ili"]
+[gd_scene load_steps=3 format=3 uid="uid://it3pfbmv6ili"]
 
 [ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="1_tvogv"]
+[ext_resource type="AudioStream" uid="uid://8exiasvcdnpp" path="res://Assets/Audio/Music/lyre_opening.wav" id="2_s6jpd"]
 
 [node name="MainMenuStartScreen" type="Control"]
 layout_mode = 3
@@ -29,3 +30,7 @@ text = "
 
 GAME TITLE GOES HERE LOL"
 horizontal_alignment = 1
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_s6jpd")
+autoplay = true

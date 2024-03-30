@@ -20,9 +20,10 @@ public partial class NPC : Node3D
     [Export] public double visionCheckTime = 0.25;
     [Export] public float attackRange = 3.5f;
     [Export] public bool hostile = true;
+    [Export] public int damageMin = 5;
+    [Export] public int damageMax = 10;
 
     private Game game;
-    private AudioStreamPlayer3D stepAudio;
     private AnimationPlayer anim;
     private RandomNumberGenerator rand = new();
     private Animation currentAnim = Animation.TPose; // needed?
@@ -37,7 +38,6 @@ public partial class NPC : Node3D
     private GpuParticles3D bloodInstance = new();
     private PackedScene blood = GD.Load<PackedScene>("res://Scenes/blood_particles.tscn");
 
-
     // LoS system
     private Area3D visionArea;
     private RayCast3D visionRayCast;
@@ -48,6 +48,12 @@ public partial class NPC : Node3D
     private Vector3 nextFollowMovePoint;
     private Node3D followTarget;
     private Label3D debugLabel;
+
+    private AudioStreamPlayer3D stepAudio;
+    private AudioStreamPlayer3D attackAudio;
+    private AudioStreamPlayer3D receiveHitAudio;
+    private AudioStreamPlayer3D deathAudio;
+    private AudioStreamPlayer3D aggroAudio;
 
     public enum Animation
     {
@@ -150,6 +156,10 @@ public partial class NPC : Node3D
         anim = GetNode<AnimationPlayer>("AnimationPlayer");
         game.Tick += () => tookActionThisTick = false;
         stepAudio = GetNode<AudioStreamPlayer3D>("StepAudioStreamPlayer3D");
+        receiveHitAudio = GetNode<AudioStreamPlayer3D>("ReceiveHitAudioStreamPlayer3D");
+        attackAudio = GetNode<AudioStreamPlayer3D>("AttackAudioStreamPlayer3D");
+        deathAudio = GetNode<AudioStreamPlayer3D>("DeathAudioStreamPlayer3D");
+        aggroAudio = GetNode<AudioStreamPlayer3D>("AggroAudioStreamPlayer3D");
 
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
@@ -393,7 +403,7 @@ public partial class NPC : Node3D
                 movementType = MovementType.Follow;
                 break;
             case State.Attack:
-                game.Log($"{name} started attack!");
+                game.Log($"{name} started attack on {followTarget.Name}.", true);
                 break;
         }
         currentState = newState;
@@ -414,7 +424,12 @@ public partial class NPC : Node3D
         game.Log($"{attacker.Name} hit {name}'s {hitArea.GetParent().Name} and dealt {damageDealt} damage! {name} has {currentHealth} HP remaining.");
         if (currentHealth <= 0)
         {
-            SetState(State.Dead);
+            SetState(State.Dead); // maybe fix the ability to "kill" dead NPCs multiple times? but it's kind of funny
+            deathAudio.Play();
+        }
+        else
+        {
+            receiveHitAudio.Play();
         }
     }
 
@@ -464,7 +479,10 @@ public partial class NPC : Node3D
             case State.Idle:
             case State.Wander:
                 if (FoundTarget())
+                {
+                    aggroAudio.Play();
                     SetState(State.Chase); // do something different for non-hostile NPCs like greet player
+                }
                 break;
         }
     }
@@ -474,9 +492,11 @@ public partial class NPC : Node3D
         return GlobalTransform.Origin.DistanceTo(followTarget.GlobalTransform.Origin) <= attackRange;
     }
 
+    // invoke from animations? or am I too lazy?
     private void SwingComplete()
     {
-        // implement based on animation speeds? or am I too lazy?
+        var player = ((Player)followTarget);
+        player.ReceiveHit(this, rand.RandiRange(damageMin, damageMax));
     }
 
     public override void _Process(double delta)
@@ -488,6 +508,9 @@ public partial class NPC : Node3D
             navAgent.TargetPosition = followTarget.GlobalTransform.Origin;
             nextFollowMovePoint = navAgent.GetNextPathPosition();
         }
+
+        if (game.gameOver)
+            return;
 
         if (!tookActionThisTick)
         {
@@ -514,7 +537,11 @@ public partial class NPC : Node3D
                     break;
                 case State.Attack:
                     if (hostile && ReachedTarget() && FoundTarget())
+                    {
                         SetState(State.Attack);
+                        attackAudio.Play();
+                        SwingComplete(); // todo: delay handling instead
+                    }
                     else
                     {
                         movementType = MovementType.Follow;

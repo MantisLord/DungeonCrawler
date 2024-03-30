@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://dncp8wn86i8t5"
+path="res://.godot/imported/Sword Sheath 2.ogg-e4587e0d57116f867cbdb6a30e720045.oggvorbisstr"
+
+[deps]
+
+source_file="res://Assets/Audio/Sword/Sheath/Sword Sheath 2.ogg"
+dest_files=["res://.godot/imported/Sword Sheath 2.ogg-e4587e0d57116f867cbdb6a30e720045.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

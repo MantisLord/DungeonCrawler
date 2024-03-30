@@ -11,6 +11,8 @@ public partial class Game : Node
     [Signal] public delegate void DisplayLogEventHandler();
     public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
 
+    public bool gameOver = false;
+
     // menu settings
     public bool debugMode = true;
     public float fov = 75;

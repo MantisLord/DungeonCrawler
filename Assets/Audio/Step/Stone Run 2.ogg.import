@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cwx7rj4vcv4s8"
+path="res://.godot/imported/Stone Run 2.ogg-13e9b6398a916b413c3569647d9d76a2.oggvorbisstr"
+
+[deps]
+
+source_file="res://Assets/Audio/Step/Stone Run 2.ogg"
+dest_files=["res://.godot/imported/Stone Run 2.ogg-13e9b6398a916b413c3569647d9d76a2.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

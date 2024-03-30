@@ -1,6 +1,5 @@
 using Godot;
 using static Game;
-using static AudioManager;
 
 public partial class Player : Node3D
 {
@@ -9,7 +8,6 @@ public partial class Player : Node3D
     private const float MOVE_SPEED = 0.3f;
 
     private Game game;
-    private AudioManager audioMgr;
 
     private Camera3D cam;
     private RayCast3D forwardRay;
@@ -39,6 +37,9 @@ public partial class Player : Node3D
     private Label debugInfoLabel;
     private Label logLabel;
     private ScrollContainer logScroll;
+    private ProgressBar healthBar;
+    private ColorRect hitRect;
+    private Label gameOverLabel;
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
 
@@ -47,22 +48,36 @@ public partial class Player : Node3D
     private Node3D interactAreaParent;
     private AnimationPlayer anim;
 
+    private int health = 100;
+
+    private AudioStreamPlayer3D interactAudio;
+    private AudioStreamPlayer3D stepAudio;
+    private AudioStreamPlayer3D swordUnsheathAudio;
+    private AudioStreamPlayer3D swordSheathAudio;
+    private AudioStreamPlayer3D swordHitAudio;
+    private AudioStreamPlayer3D swordSwingAudio;
+    private AudioStreamPlayer3D torchLightAudio;
+    private AudioStreamPlayer3D torchExtinguishAudio;
+    private AudioStreamPlayer3D torchLoopAudio;
+    private AudioStreamPlayer3D receiveHitAudio; // missing sound
+    private AudioStreamPlayer3D deathAudio; // missing sound
+
     public bool tookActionThisTick = false;
     public bool swinging = false;
 
     public override void _Ready()
     {
         game = GetNode<Game>("/root/Game");
+        game.gameOver = false;
         game.DisplayLog += HandleDisplayLogSignal;
         game.Tick += () => tookActionThisTick = false;
-        audioMgr = GetNode<AudioManager>("/root/AudioManager");
 
         cam = GetNode<Camera3D>("Camera3D");
-
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
+        anim = GetNode<AnimationPlayer>("AnimationPlayer");
 
         menu = GetNode<PanelContainer>("UserInterface/MainMenu/MainMenuPanelContainer");
         interactLabel = GetNode<Label>("UserInterface/InteractLabel");
@@ -70,15 +85,27 @@ public partial class Player : Node3D
         logLabel = logScroll.GetNode<Label>("LogLabel");
         debugInfoPanel = GetNode<PanelContainer>("UserInterface/DebugInfoPanelContainer");
         debugInfoLabel = debugInfoPanel.GetNode<Label>("DebugInfoLabel");
-        anim = GetNode<AnimationPlayer>("AnimationPlayer");
-
         item1Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel");
         item2Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item2Panel");
         item3Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item3Panel");
-
         item1Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel/Item1TextureRect");
         item2Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item2Panel/Item2TextureRect");
         item3Texture = GetNode<TextureRect>("UserInterface/StatsPanelContainer/HBoxContainer/Item3Panel/Item3TextureRect");
+        healthBar = GetNode<ProgressBar>("UserInterface/StatsPanelContainer/HBoxContainer/HPProgressBar");
+        hitRect = GetNode<ColorRect>("UserInterface/HitRect");
+        gameOverLabel = GetNode<Label>("UserInterface/GameOverLabel");
+
+        interactAudio = GetNode<AudioStreamPlayer3D>("InteractAudioStreamPlayer3D");
+        stepAudio = GetNode<AudioStreamPlayer3D>("StepAudioStreamPlayer3D");
+        swordUnsheathAudio = GetNode<AudioStreamPlayer3D>("SwordUnsheathAudioStreamPlayer3D");
+        swordSheathAudio = GetNode<AudioStreamPlayer3D>("SwordSheathAudioStreamPlayer3D");
+        swordHitAudio = GetNode<AudioStreamPlayer3D>("SwordHitAudioStreamPlayer3D"); // use me somewhere
+        swordSwingAudio = GetNode<AudioStreamPlayer3D>("SwordSwingAudioStreamPlayer3D");
+        torchLightAudio = GetNode<AudioStreamPlayer3D>("TorchLightAudioStreamPlayer3D");
+        torchExtinguishAudio = GetNode<AudioStreamPlayer3D>("TorchExtinguishAudioStreamPlayer3D");
+        torchLoopAudio = GetNode<AudioStreamPlayer3D>("TorchLoopAudioStreamPlayer3D");
+        receiveHitAudio = GetNode<AudioStreamPlayer3D>("ReceiveHitAudioStreamPlayer3D"); // missing sound
+        deathAudio = GetNode<AudioStreamPlayer3D>("DeathAudioStreamPlayer3D"); // missing sound
 
         tookActionThisTick = false;
         interactLabel.Text = "";
@@ -95,7 +122,7 @@ public partial class Player : Node3D
         {
             case Item.Sword:
                 item1Texture.Texture = swordTexture;
-                audioMgr.Play(Audio.InteractSuccess, AudioChannel.SFX1);
+                interactAudio.Play();
                 game.Log($"Picked up {Item.Sword}.");
                 foundItem1 = true;
                 break;
@@ -115,7 +142,7 @@ public partial class Player : Node3D
         switch (equippedItem)
         {
             case Item.Sword:
-                audioMgr.Play(Audio.SheathSword, AudioChannel.SFX2);
+                swordSheathAudio.Play();
                 item1Panel.AddThemeStyleboxOverride("panel", style);
                 break;
         }
@@ -133,7 +160,7 @@ public partial class Player : Node3D
             switch (newItem)
             {
                 case Item.Sword:
-                    audioMgr.Play(Audio.DrawSword, AudioChannel.SFX2);
+                    swordUnsheathAudio.Play();
                     var style = new StyleBoxFlat();
                     style.BgColor = new Color("YELLOW");
                     style.SetCornerRadiusAll(20);
@@ -158,7 +185,7 @@ public partial class Player : Node3D
                 canUse = false;
                 canEquip = false;
                 swinging = true;
-                audioMgr.Play(Audio.SwingSword, AudioChannel.SFX2);
+                swordSwingAudio.Play();
                 anim.Play("SwingSword");
                 await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED * 2), SceneTreeTimer.SignalName.Timeout);
                 swinging = false;
@@ -210,6 +237,30 @@ public partial class Player : Node3D
         }
     }
 
+    // todo: more specific hitboxes for players?
+    public async void ReceiveHit(Node3D attacker, int damageDealt)
+    {
+        game.Log($"{attacker.Name} hit you for {damageDealt} damage.");
+
+        // need sounds for this
+        //receiveHitAudioPlayer.Play();
+
+        health -= damageDealt;
+        healthBar.Value = health;
+
+        hitRect.Visible = true;
+        await ToSignal(GetTree().CreateTimer(0.2f), SceneTreeTimer.SignalName.Timeout);
+        hitRect.Visible = false;
+
+        if (health <= 0)
+        {
+            game.gameOver = true;
+            menu.Visible = true;
+            gameOverLabel.Visible = true;
+            gameOverLabel.Text = $"\n\n\nGAME OVER - You were killed by a {attacker.Name}!";
+        }
+    }
+
     public override void _Process(double delta)
     {
         float degrees = NormalizeDegrees(Rotation.Y);
@@ -226,6 +277,9 @@ public partial class Player : Node3D
 
         if (cam.Fov != game.fov)
             cam.Fov = game.fov;
+
+        if (game.gameOver)
+            return;
 
         if (Input.IsActionJustPressed("interact"))
         {
@@ -263,22 +317,22 @@ public partial class Player : Node3D
         if (Input.IsActionPressed("forward") && !forwardRay.IsColliding())
         {
             tween = game.HandleMoveTween(this, Vector3.Forward, MOVE_SPEED);
-            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
+            stepAudio.Play();
         }
         if (Input.IsActionPressed("back") && !backRay.IsColliding())
         {
             tween = game.HandleMoveTween(this, Vector3.Back, MOVE_SPEED);
-            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
+            stepAudio.Play();
         }
         if (Input.IsActionPressed("strafe_right") && !rightRay.IsColliding())
         {
             tween = game.HandleMoveTween(this, Vector3.Right, MOVE_SPEED);
-            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
+            stepAudio.Play();
         }
         if (Input.IsActionPressed("strafe_left") && !leftRay.IsColliding())
         {
             tween = game.HandleMoveTween(this, Vector3.Left, MOVE_SPEED);
-            audioMgr.Play(Audio.Step, AudioChannel.SFX3);
+            stepAudio.Play();
         }
         if (Input.IsActionPressed("turn_left"))
         {

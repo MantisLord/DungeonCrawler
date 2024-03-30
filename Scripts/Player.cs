@@ -161,8 +161,10 @@ public partial class Player : Node3D
             {
                 case Item.Sword:
                     swordUnsheathAudio.Play();
-                    var style = new StyleBoxFlat();
-                    style.BgColor = new Color("YELLOW");
+                    var style = new StyleBoxFlat
+                    {
+                        BgColor = new Color("YELLOW")
+                    };
                     style.SetCornerRadiusAll(20);
                     item1Panel.AddThemeStyleboxOverride("panel", style);
                     break;
@@ -208,14 +210,26 @@ public partial class Player : Node3D
     {
         if (area.Name == InteractableArea.SwordPickupArea3D.ToString())
         {
-            interactLabel.Text = $"Press [{keycodeString}] to pick up sword!";
             interactAreaType = InteractableArea.SwordPickupArea3D;
             interactAreaParent = area.GetParent<Node3D>();
+
+            interactLabel.Text = $"Press [{keycodeString}] to pick up sword!";
+        }
+        else if (area.Name == InteractableArea.SceneTransitionArea3D.ToString())
+        {
+            interactAreaType = InteractableArea.SceneTransitionArea3D;
+            interactAreaParent = area.GetParent<Node3D>();
+
+            if (game.currentScene == Scene.outside)
+                interactLabel.Text = $"Press [{keycodeString}] to enter dungeon.";
+            else
+                interactLabel.Text = $"Press [{keycodeString}] to exit dungeon.";
         }
     }
     private void OnArea3DExited(Area3D area)
     {
-        if (area.Name == InteractableArea.SwordPickupArea3D.ToString())
+        if (area.Name == InteractableArea.SwordPickupArea3D.ToString() ||
+            area.Name == InteractableArea.SceneTransitionArea3D.ToString())
         {
             interactLabel.Text = "";
             interactAreaType = InteractableArea.None;
@@ -233,6 +247,14 @@ public partial class Player : Node3D
             case InteractableArea.SwordPickupArea3D:
                 AddItem(Item.Sword);
                 interactAreaParent.QueueFree();
+                break;
+            case InteractableArea.SceneTransitionArea3D:
+                if (game.currentScene == Scene.outside)
+                {
+                    game.ChangeScene(Scene.dungeon);
+                }
+                else
+                    game.ChangeScene(Scene.outside);
                 break;
         }
     }

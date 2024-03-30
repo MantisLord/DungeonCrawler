@@ -11,6 +11,7 @@ public partial class Game : Node
     [Signal] public delegate void DisplayLogEventHandler();
     public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
 
+    public Scene currentScene = Scene.main_menu;
     public bool gameOver = false;
 
     // menu settings
@@ -58,6 +59,7 @@ public partial class Game : Node
         None,
         SwordPickupArea3D,
         HitboxArea3D,
+        SceneTransitionArea3D,
     }
 
     public enum Item
@@ -108,12 +110,14 @@ public partial class Game : Node
     public enum Scene
     {
         main_menu,
-        outside
+        outside,
+        dungeon
     }
 
     public void ChangeScene(Scene scene)
     {
         GetTree().ChangeSceneToFile($"res://Scenes/{scene}.tscn");
+        currentScene = scene;
     }
 
     public void Log(string msg, bool debugOnly = false)

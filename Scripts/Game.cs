@@ -5,11 +5,12 @@ public partial class Game : Node
 {
     private const float TILE_SIZE = 2.0f;
     private const double TICK_TIME = 1.0f;
+    private const string LOG_DEFAULT_TEXT = "Cyclopes - Top Secret Messages\r\n--------------------------------";
     private Timer npcActionTick;
 
     [Signal] public delegate void TickEventHandler();
     [Signal] public delegate void DisplayLogEventHandler();
-    public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
+    public string allLogText = LOG_DEFAULT_TEXT;
 
     public Scene currentScene = Scene.main_menu;
     public bool gameOver = false;
@@ -19,7 +20,7 @@ public partial class Game : Node
     public bool foundItem3 = false;
 
     // menu settings
-    public bool debugMode = true;
+    public bool debugMode = false;
     public float fov = 75;
     public bool teleportMode = false;
 
@@ -64,15 +65,24 @@ public partial class Game : Node
         SwordPickupArea3D,
         HitboxArea3D,
         SceneTransitionArea3D,
-        TorchPickupArea3D
+        TorchPickupArea3D,
+        AmphoraPickupArea3D,
     }
 
     public enum Item
     {
         None,
         Sword,
-        Potion,
+        Amphora,
         Torch,
+    }
+    
+    public void Restart()
+    {
+        allLogText = LOG_DEFAULT_TEXT;
+        foundItem1 = false;
+        foundItem2 = false;
+        foundItem3 = false;
     }
 
     public Tween HandleMoveTween(Node3D mover, Vector3 direction, float speed)

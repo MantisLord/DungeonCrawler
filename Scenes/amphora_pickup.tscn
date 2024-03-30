@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://eog3bjqh5i2u"]
+
+[ext_resource type="PackedScene" uid="uid://be7tlo7xa3j56" path="res://Assets/Models/Amphora/amphora.tscn" id="1_hn517"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dpwq6"]
+size = Vector3(2, 2, 2)
+
+[node name="AmphoraPickup" type="Node3D"]
+
+[node name="AmphoraPickupArea3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AmphoraPickupArea3D"]
+shape = SubResource("BoxShape3D_dpwq6")
+
+[node name="Amphora" parent="." instance=ExtResource("1_hn517")]
+transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, -0.5)

@@ -41,6 +41,7 @@ public partial class Player : Node3D
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
     private Texture2D torchTexture = GD.Load<Texture2D>("res://Assets/Textures/item_torch.png");
+    private Texture2D amphoraTexture = GD.Load<Texture2D>("res://Assets/Textures/item_amphora.png");
 
     private string keycodeString;
     private InteractableArea interactAreaType;
@@ -48,6 +49,8 @@ public partial class Player : Node3D
     private AnimationPlayer anim;
 
     private int health = 100;
+    private int amphoraRestoreMin = 10;
+    private int amphoraRestoreMax = 15;
 
     private Node3D torchLight;
 
@@ -62,6 +65,10 @@ public partial class Player : Node3D
     private AudioStreamPlayer3D torchLoopAudio;
     private AudioStreamPlayer3D receiveHitAudio; // missing sound
     private AudioStreamPlayer3D deathAudio; // missing sound
+    private AudioStreamPlayer3D amphoraEquipAudio;
+    private AudioStreamPlayer3D amphoraDrinkAudio;
+
+    private RandomNumberGenerator rand = new();
 
     public bool tookActionThisTick = false;
     public bool swinging = false;
@@ -109,6 +116,10 @@ public partial class Player : Node3D
         torchLoopAudio = GetNode<AudioStreamPlayer3D>("TorchLoopAudioStreamPlayer3D");
         receiveHitAudio = GetNode<AudioStreamPlayer3D>("ReceiveHitAudioStreamPlayer3D"); // missing sound
         deathAudio = GetNode<AudioStreamPlayer3D>("DeathAudioStreamPlayer3D"); // missing sound
+        amphoraEquipAudio = GetNode<AudioStreamPlayer3D>("AmphoraEquipAudioStreamPlayer3D");
+        amphoraDrinkAudio = GetNode<AudioStreamPlayer3D>("AmphoraDrinkAudioStreamPlayer3D");
+
+        rand.Randomize();
 
         tookActionThisTick = false;
         interactLabel.Text = "";
@@ -132,6 +143,7 @@ public partial class Player : Node3D
         }
         if (game.foundItem3)
         {
+            item3Texture.Texture = amphoraTexture;
         }
     }
 
@@ -150,6 +162,12 @@ public partial class Player : Node3D
                 interactAudio.Play();
                 game.Log($"Picked up {Item.Torch}. May this tool guide your path.");
                 game.foundItem2 = true;
+                break;
+            case Item.Amphora:
+                item3Texture.Texture = amphoraTexture;
+                interactAudio.Play();
+                game.Log($"Picked up {Item.Amphora}. Drink from this vessel when you grow weary.");
+                game.foundItem3 = true;
                 break;
         }
     }
@@ -179,6 +197,9 @@ public partial class Player : Node3D
                 }
                 torchLight.Visible = false;
                 break;
+            case Item.Amphora:
+                item3Panel.AddThemeStyleboxOverride("panel", style);
+                break;
         }
         game.Log($"Unequipped {equippedItem}.");
         await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
@@ -206,6 +227,9 @@ public partial class Player : Node3D
                 case Item.Torch:
                     // take out unlit torch sound here
                     item2Panel.AddThemeStyleboxOverride("panel", style);
+                    break;
+                case Item.Amphora:
+                    item3Panel.AddThemeStyleboxOverride("panel", style);
                     break;
             }
             anim.Play($"Raise{newItem}");
@@ -248,7 +272,28 @@ public partial class Player : Node3D
                     torchLoopAudio.Stop();
                 }
                 break;
+            case Item.Amphora:
+                canUse = false;
+                canEquip = false;
+                anim.Play("DrinkAmphora");
+                await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
+                canUse = true;
+                canEquip = true;
+                break;
         }
+    }
+
+    // triggered by animation
+    private async void PotionReachedLips()
+    {
+        amphoraDrinkAudio.Play();
+        var restoreAmount = rand.RandiRange(amphoraRestoreMin, amphoraRestoreMax);
+        game.Log($"You drank from the {Item.Amphora}. It restored {restoreAmount} HP.");
+        hitRect.Color = new Color(0, 255, 0, 25);
+        hitRect.Visible = true;
+        await ToSignal(GetTree().CreateTimer(0.1f), SceneTreeTimer.SignalName.Timeout);
+        hitRect.Visible = false;
+        hitRect.Color = new Color(255, 0, 0, 25);
     }
 
     private void SetInteractKeycodeString()
@@ -260,34 +305,40 @@ public partial class Player : Node3D
 
     private void OnArea3DEntered(Area3D area)
     {
-        if (area.Name == InteractableArea.SwordPickupArea3D.ToString() ||
-            area.Name == InteractableArea.TorchPickupArea3D.ToString())
+        Enum.TryParse(area.Name, out InteractableArea interactArea);
+        switch (interactArea)
         {
-            interactAreaType = area.Name == InteractableArea.SwordPickupArea3D.ToString() ? InteractableArea.SwordPickupArea3D : InteractableArea.TorchPickupArea3D;
-            interactAreaParent = area.GetParent<Node3D>();
+            case InteractableArea.SwordPickupArea3D:
+            case InteractableArea.TorchPickupArea3D:
+            case InteractableArea.AmphoraPickupArea3D:
+                interactAreaType = interactArea;
+                interactAreaParent = area.GetParent<Node3D>();
+                interactLabel.Text = $"Press [{keycodeString}] to pick up {area.Name.ToString().Replace("PickupArea3D", "")}!";
+                break;
+            case InteractableArea.SceneTransitionArea3D:
+                interactAreaType = interactArea;
+                interactAreaParent = area.GetParent<Node3D>();
 
-            interactLabel.Text = $"Press [{keycodeString}] to pick up {area.Name.ToString().Replace("PickupArea3D","")}!";
-        }
-        else if (area.Name == InteractableArea.SceneTransitionArea3D.ToString())
-        {
-            interactAreaType = InteractableArea.SceneTransitionArea3D;
-            interactAreaParent = area.GetParent<Node3D>();
-
-            if (game.currentScene == Scene.outside)
-                interactLabel.Text = $"Press [{keycodeString}] to enter dungeon.";
-            else
-                interactLabel.Text = $"Press [{keycodeString}] to exit dungeon.";
+                if (game.currentScene == Scene.outside)
+                    interactLabel.Text = $"Press [{keycodeString}] to enter dungeon.";
+                else
+                    interactLabel.Text = $"Press [{keycodeString}] to exit dungeon.";
+                break;
         }
     }
     private void OnArea3DExited(Area3D area)
     {
-        if (area.Name == InteractableArea.SwordPickupArea3D.ToString() ||
-            area.Name == InteractableArea.SceneTransitionArea3D.ToString() ||
-            area.Name == InteractableArea.TorchPickupArea3D.ToString())
+        Enum.TryParse(area.Name, out InteractableArea interactArea);
+        switch (interactArea)
         {
-            interactLabel.Text = "";
-            interactAreaType = InteractableArea.None;
-            interactAreaParent = null;
+            case InteractableArea.SwordPickupArea3D:
+            case InteractableArea.SceneTransitionArea3D:
+            case InteractableArea.TorchPickupArea3D:
+            case InteractableArea.AmphoraPickupArea3D:
+                interactLabel.Text = "";
+                interactAreaType = InteractableArea.None;
+                interactAreaParent = null;
+                break;
         }
     }
 
@@ -313,6 +364,10 @@ public partial class Player : Node3D
                 }
                 else
                     game.ChangeScene(Scene.outside);
+                break;
+            case InteractableArea.AmphoraPickupArea3D:
+                AddItem(Item.Amphora);
+                interactAreaParent.QueueFree();
                 break;
         }
     }
@@ -367,32 +422,39 @@ public partial class Player : Node3D
         }
         if (Input.IsActionJustPressed("equip_item1") && game.foundItem1 && canEquip)
         {
-            switch (equippedItem)
+            if (equippedItem != Item.None && equippedItem != Item.Sword)
             {
-                case Item.Sword:
-                case Item.Torch:
-                    UnequipItem();
-                    break;
-                case Item.None:
-                    EquipItem(Item.Sword);
-                    break;
+                UnequipItem();
+                EquipItem(Item.Sword);
             }
+            else if (equippedItem == Item.Sword) // must be trying to just put away instead of switch
+                UnequipItem();
+            else
+                EquipItem(Item.Sword);
         }
         if (Input.IsActionJustPressed("equip_item2") && game.foundItem2 && canEquip)
         {
-            switch (equippedItem)
+            if (equippedItem != Item.None && equippedItem != Item.Torch)
             {
-                case Item.Sword:
-                case Item.Torch:
-                    UnequipItem();
-                    break;
-                case Item.None:
-                    EquipItem(Item.Torch);
-                    break;
+                UnequipItem();
+                EquipItem(Item.Torch);
             }
+            else if (equippedItem == Item.Torch)
+                UnequipItem();
+            else
+                EquipItem(Item.Torch);
         }
-        if (Input.IsActionJustPressed("equip_item3"))
+        if (Input.IsActionJustPressed("equip_item3") && game.foundItem3 && canEquip)
         {
+            if (equippedItem != Item.None && equippedItem != Item.Amphora)
+            {
+                UnequipItem();
+                EquipItem(Item.Amphora);
+            }
+            else if (equippedItem == Item.Amphora)
+                UnequipItem();
+            else
+                EquipItem(Item.Amphora);
         }
         if (Input.IsActionJustPressed("use_item") && canUse)
         {

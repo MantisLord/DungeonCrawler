@@ -32,6 +32,8 @@ public partial class MainMenu : Node
 
     void PlayButtonPressed()
     {
+        game.allLogText = "";
+        game.Restart();
         game.ChangeScene(Scene.outside);
     }
 

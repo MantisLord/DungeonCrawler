@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://j7c4rxxa0usc"]
+[gd_scene load_steps=29 format=3 uid="uid://j7c4rxxa0usc"]
 
 [ext_resource type="PackedScene" uid="uid://077fp6hi7wle" path="res://Scenes/player.tscn" id="1_wilet"]
 [ext_resource type="Texture2D" uid="uid://bv3n2c8pixm8n" path="res://Assets/Sky/DaySkyHDRI027B_4K-HDR.exr" id="2_mt3ha"]
@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://dfqvmldcq4das" path="res://Scenes/GridTiles/tower.tscn" id="16_t0btc"]
 [ext_resource type="PackedScene" uid="uid://82j4tkqupkqi" path="res://Assets/Models/Door/door.tscn" id="17_dfo5y"]
 [ext_resource type="PackedScene" uid="uid://d82shcw6lrk6" path="res://Scenes/torch_pickup.tscn" id="20_n68cf"]
+[ext_resource type="PackedScene" uid="uid://eog3bjqh5i2u" path="res://Scenes/amphora_pickup.tscn" id="21_g8b0o"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_qgick"]
 panorama = ExtResource("2_mt3ha")
@@ -760,3 +761,6 @@ transform = Transform3D(0.004, 0, 0, 0, 0.004, 0, 0, 0, 0.004, 0, -0.001, -46.8)
 
 [node name="TorchPickup" parent="." instance=ExtResource("20_n68cf")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -9)
+
+[node name="AmphoraPickup" parent="." instance=ExtResource("21_g8b0o")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.69784, 0, -12)

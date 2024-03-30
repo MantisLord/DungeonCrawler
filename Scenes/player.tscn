@@ -1,7 +1,8 @@
-[gd_scene load_steps=48 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=53 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
+[ext_resource type="PackedScene" uid="uid://be7tlo7xa3j56" path="res://Assets/Models/Amphora/amphora.tscn" id="4_r611r"]
 [ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
 [ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
 [ext_resource type="FontFile" uid="uid://cv3vn1d8xm048" path="res://Assets/Font/DIOGENES.ttf" id="5_f3r1y"]
@@ -30,6 +31,8 @@
 [ext_resource type="AudioStream" uid="uid://ca2i0v8a2rm78" path="res://Assets/Audio/Sword/Swing/Sword Attack 3.ogg" id="24_xhdtg"]
 [ext_resource type="AudioStream" uid="uid://biw1si77cmsx4" path="res://Assets/Audio/Sword/Swing/sword_swing.wav" id="25_wmhyp"]
 [ext_resource type="PackedScene" uid="uid://buly4scxuj61m" path="res://Assets/Models/Torch/torch.tscn" id="29_5e60y"]
+[ext_resource type="AudioStream" uid="uid://cbmtrvvcmxg6r" path="res://Assets/Audio/amphora_drink.wav" id="32_vsy4n"]
+[ext_resource type="AudioStream" uid="uid://cehx6udhuipk" path="res://Assets/Audio/amphora_equip.mp3" id="33_dhc3n"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -54,6 +57,30 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector3(0.692, -2.1, -0.635)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Amphora:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.254818, -0.0296706, 0.333358)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Amphora:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.751, -1.653, -0.809)]
 }
 
 [sub_resource type="Animation" id="Animation_6erxf"]
@@ -126,12 +153,72 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(0.692, -2, -0.635), Vector3(2, -1, -2)]
+"values": [Vector3(0.692, -2, -0.635), Vector3(2, -0.75, -1.75)]
+}
+
+[sub_resource type="Animation" id="Animation_hxw52"]
+resource_name = "RaiseAmphora"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Amphora:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.75099, -1.65253, -0.808558), Vector3(0.751, -0.5, -0.809)]
+}
+
+[sub_resource type="Animation" id="Animation_36m73"]
+resource_name = "DrinkAmphora"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Amphora:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0.751, -0.5, -0.809), Vector3(0, -0.3, -0.85), Vector3(0, -0.3, -0.85), Vector3(0.751, -0.5, -0.809)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Amphora:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(-0.255219, -0.0267032, 0.333662), Vector3(0.785398, 0, 0), Vector3(0.785398, 0, 0), Vector3(-0.255219, -0.0267032, 0.333662)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"PotionReachedLips"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_87lao"]
 _data = {
+"DrinkAmphora": SubResource("Animation_36m73"),
 "RESET": SubResource("Animation_7wxft"),
+"RaiseAmphora": SubResource("Animation_hxw52"),
 "RaiseSword": SubResource("Animation_6erxf"),
 "RaiseTorch": SubResource("Animation_v240c"),
 "SwingSword": SubResource("Animation_0gtdv")
@@ -239,10 +326,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
-transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669874, 0.00937422, 0.00242358, 0.00250005, 0.692, -2.1, -0.635)
+transform = Transform3D(-0.00224131, -0.00128741, 0.00966018, 0.00266648, -0.00961513, -0.000662739, 0.00937371, 0.00242733, 0.00249833, 0.692, -2.1, -0.635)
 
 [node name="Torch" parent="." instance=ExtResource("29_5e60y")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.692, -2, -0.635)
+
+[node name="Amphora" parent="." instance=ExtResource("4_r611r")]
+transform = Transform3D(0.94698, -0.320007, -0.0287083, 0.316652, 0.914435, 0.252069, -0.0544122, -0.247795, 0.967283, 0.751, -1.653, -0.809)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -438,10 +528,17 @@ stream = ExtResource("20_3n1ee")
 
 [node name="TorchLoopAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("21_n845t")
+max_db = 2.0
 
 [node name="ReceiveHitAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 
 [node name="DeathAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+
+[node name="AmphoraDrinkAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("32_vsy4n")
+
+[node name="AmphoraEquipAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("33_dhc3n")
 
 [connection signal="area_entered" from="Area3D" to="." method="OnArea3DEntered"]
 [connection signal="area_exited" from="Area3D" to="." method="OnArea3DExited"]

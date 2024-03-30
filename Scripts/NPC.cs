@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using static Game;
 
 public partial class NPC : Node3D
@@ -19,11 +18,11 @@ public partial class NPC : Node3D
     [Export] public int wanderTimeMin = 30; // how long before potentially going idle again if both wander = true and randomIdle = true
     [Export] public int wanderTimeMax = 60;
     [Export] public double visionCheckTime = 0.25;
+    [Export] public float attackRange = 3.5f;
+    [Export] public bool hostile = true;
 
     private Game game;
     private AudioStreamPlayer3D stepAudio;
-    private AnimationTree animTree;
-    private AnimationNodeStateMachinePlayback stateMachine;
     private AnimationPlayer anim;
     private RandomNumberGenerator rand = new();
     private Animation currentAnim = Animation.TPose; // needed?
@@ -138,6 +137,7 @@ public partial class NPC : Node3D
 
     public enum MovementType
     {
+        None,
         Patrol,         // straight lines, only turning when necessary
         Trailblazer,    // 75% forward, 25% turn
         Chaotic,        // all random
@@ -161,7 +161,7 @@ public partial class NPC : Node3D
         navAgent = GetNode<NavigationAgent3D>("NavigationAgent3D");
 
         visionArea = GetNode<Area3D>("Joints/Skeleton3D/Eye/VisionArea3D");
-        visionRayCast = GetNode<RayCast3D>("VisionRayCast3D");
+        visionRayCast = GetNode<RayCast3D>("StaticBody3D/VisionRayCast3D");
 
         rand.Randomize();
         stateEndTimer = new()
@@ -234,8 +234,13 @@ public partial class NPC : Node3D
         return action;
     }
 
-    void MoveStep()
+    void TryMoveStep()
     {
+        if (movementType == MovementType.None)
+        {
+            return;
+        }
+
         Array values = Enum.GetValues(typeof(MoveAction));
         List<MoveAction> availMoveActions = new List<MoveAction>();
         availMoveActions.AddRange((IEnumerable<MoveAction>)values);
@@ -286,7 +291,8 @@ public partial class NPC : Node3D
                     $"\nAngleTo: {angleTo}" +
                     $"\nCalcFace: {calcCardinal}" +
                     $"\nCalcDegrees: {calcDegrees}" +
-                    $"\nNextMove: {nextMove}";
+                    $"\nNextMove: {nextMove}" + 
+                    $"\nDistanceTo: {Position.DistanceTo(nextFollowMovePoint)}";
 
                 break;
             case MovementType.Chaotic:
@@ -309,6 +315,7 @@ public partial class NPC : Node3D
                 }
                 break;
         }
+
         if (!CanPerformMoveAction(nextMove))
         {
             nextMove = GetFirstUnblockedMove();
@@ -381,9 +388,12 @@ public partial class NPC : Node3D
                 game.Log($"{name} died.");
                 break;
             case State.Chase:
-                game.Log($"{name} spotted {spottedTarget.Name}. Starting to chase.");
+                game.Log($"{name} started chasing {spottedTarget.Name}.", true);
                 followTarget = spottedTarget; // store here because spottedTarget can be changed/lost during chase or follow
                 movementType = MovementType.Follow;
+                break;
+            case State.Attack:
+                game.Log($"{name} started attack!");
                 break;
         }
         currentState = newState;
@@ -418,6 +428,8 @@ public partial class NPC : Node3D
             {
                 var overlapParent = overlap.GetParent();
 
+                //game.Log($"I SEE PT1 {overlap.Name} | {overlapParent.Name} | {overlapParent.GetParent().Name}", true);
+
                 if (overlapParent.GetType() == typeof(Player))
                 {
                     var playerPosition = overlap.GlobalTransform.Origin;
@@ -427,8 +439,11 @@ public partial class NPC : Node3D
                     if (visionRayCast.IsColliding())
                     {
                         var collider = visionRayCast.GetCollider();
-
                         var colliderParent = ((Node3D)collider).GetParent();
+
+                        // consider configuring collision layers here instead of explicit check
+
+                        //game.Log($"I SEE PT2 {collider.GetClass()} | {colliderParent.Name}", true);
 
                         if (colliderParent.GetType() == typeof(Player))
                         {
@@ -454,6 +469,16 @@ public partial class NPC : Node3D
         }
     }
 
+    private bool ReachedTarget()
+    {
+        return GlobalTransform.Origin.DistanceTo(followTarget.GlobalTransform.Origin) <= attackRange;
+    }
+
+    private void SwingComplete()
+    {
+        // implement based on animation speeds? or am I too lazy?
+    }
+
     public override void _Process(double delta)
     {
         navAgent.DebugEnabled = game.debugMode;
@@ -466,15 +491,35 @@ public partial class NPC : Node3D
 
         if (!tookActionThisTick)
         {
-            //string currentAnim = stateMachine.GetCurrentNode();
             switch (currentState)
             {
                 case State.None:
                     SetState(State.Idle);
                     break;
                 case State.Wander:
+                    TryMoveStep();
+                    break;
                 case State.Chase:
-                    MoveStep();
+                    if (ReachedTarget() && FoundTarget())
+                    {
+                        movementType = MovementType.None;
+                        if (hostile)
+                            SetState(State.Attack);
+                    }
+                    else
+                    {
+                        movementType = MovementType.Follow;
+                        TryMoveStep();
+                    }
+                    break;
+                case State.Attack:
+                    if (hostile && ReachedTarget() && FoundTarget())
+                        SetState(State.Attack);
+                    else
+                    {
+                        movementType = MovementType.Follow;
+                        SetState(State.Chase);
+                    }
                     break;
             }
             tookActionThisTick = true;

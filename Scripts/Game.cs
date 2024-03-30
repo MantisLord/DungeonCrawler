@@ -10,7 +10,9 @@ public partial class Game : Node
     [Signal] public delegate void TickEventHandler();
     [Signal] public delegate void DisplayLogEventHandler();
     public string allLogText = "DungeonCrawler - Top Secret Messages\r\n--------------------------------";
-    public bool debugMode = false;
+
+    // menu settings
+    public bool debugMode = true;
     public float fov = 75;
     public bool teleportMode = false;
 

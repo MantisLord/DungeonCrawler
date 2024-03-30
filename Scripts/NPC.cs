@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using static Game;
 
 public partial class NPC : Node3D
@@ -11,12 +12,13 @@ public partial class NPC : Node3D
     [Export] public Character character = Character.Cyclops;
     [Export] public float moveSpeed = 0.5f;
     [Export] public bool wander = true;
-    [Export] public WanderType wanderType = WanderType.Trailblazer;
+    [Export] public MovementType movementType = MovementType.Trailblazer;
     [Export] public bool randomIdle = true;
     [Export] public int idleTimeMin = 8; // only impacts initial idle after spawn if randomIdle = false
     [Export] public int idleTimeMax = 16;
     [Export] public int wanderTimeMin = 30; // how long before potentially going idle again if both wander = true and randomIdle = true
     [Export] public int wanderTimeMax = 60;
+    [Export] public double visionCheckTime = 0.25;
 
     private Game game;
     private AudioStreamPlayer3D stepAudio;
@@ -35,6 +37,18 @@ public partial class NPC : Node3D
     private Timer stateEndTimer;
     private GpuParticles3D bloodInstance = new();
     private PackedScene blood = GD.Load<PackedScene>("res://Scenes/blood_particles.tscn");
+
+
+    // LoS system
+    private Area3D visionArea;
+    private RayCast3D visionRayCast;
+    private Timer visionCheckTimer;
+
+    private NavigationAgent3D navAgent;
+    private Node3D spottedTarget;
+    private Vector3 nextFollowMovePoint;
+    private Node3D followTarget;
+    private Label3D debugLabel;
 
     public enum Animation
     {
@@ -98,7 +112,7 @@ public partial class NPC : Node3D
                 break;
         }
         anim.Play($"{newAnimation}", blend, speed);
-        game.Log($"{name} playing anim {newAnimation}.");
+        game.Log($"{name} playing anim {newAnimation}.", true);
         currentAnim = newAnimation;
     }
 
@@ -122,11 +136,12 @@ public partial class NPC : Node3D
         StrafeRight,
     }
 
-    public enum WanderType
+    public enum MovementType
     {
         Patrol,         // straight lines, only turning when necessary
         Trailblazer,    // 75% forward, 25% turn
-        Chaotic         // all random
+        Chaotic,        // all random
+        Follow
     }
 
     public override void _Ready()
@@ -141,13 +156,28 @@ public partial class NPC : Node3D
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
 
+        debugLabel = GetNode<Label3D>("DebugLabel3D");
+
+        navAgent = GetNode<NavigationAgent3D>("NavigationAgent3D");
+
+        visionArea = GetNode<Area3D>("Joints/Skeleton3D/Eye/VisionArea3D");
+        visionRayCast = GetNode<RayCast3D>("VisionRayCast3D");
+
         rand.Randomize();
         stateEndTimer = new()
         {
             OneShot = true
         };
         stateEndTimer.Timeout += HandleStateEndTimerTimeout;
+        visionCheckTimer = new()
+        {
+            Autostart = true,
+            OneShot = false,
+            WaitTime = visionCheckTime
+        };
+        visionCheckTimer.Timeout += HandleVisionCheckTimerTimeout;
         AddChild(stateEndTimer);
+        AddChild(visionCheckTimer);
     }
 
     private bool CanPerformMoveAction(MoveAction action)
@@ -204,7 +234,7 @@ public partial class NPC : Node3D
         return action;
     }
 
-    void MoveRandomStep()
+    void MoveStep()
     {
         Array values = Enum.GetValues(typeof(MoveAction));
         List<MoveAction> availMoveActions = new List<MoveAction>();
@@ -218,34 +248,72 @@ public partial class NPC : Node3D
                 break;
         }
 
-        MoveAction randomMove = MoveAction.Forward;
-        switch (wanderType)
+        MoveAction nextMove = MoveAction.Forward;
+        switch (movementType)
         {
-            case WanderType.Chaotic:
-                randomMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
+            case MovementType.Follow:
+                // find direction of the nextFollowMovePoint
+                // find closest 90' rotation to direction
+                // rotate if not matching closest 90' rotation
+                // forward if matching closest 90' rotation
+
+                float degrees = NormalizeDegrees(Rotation.Y);
+                string cardinal = GetCardinalDirectionFromNormalizedDegrees(degrees);
+
+                float angleTo = Position.AngleTo(nextFollowMovePoint);
+                visionRayCast.LookAt(nextFollowMovePoint);
+                visionRayCast.ForceRaycastUpdate();
+
+                float calcDegrees = NormalizeDegrees(visionRayCast.Rotation.Y);
+                string calcCardinal = GetCardinalDirectionFromNormalizedDegrees(calcDegrees);
+
+                float bufferAmount = 45;
+
+                //     360
+                //90    o    270
+                //     180
+                if (calcDegrees >= 180 && calcDegrees <= 270 + bufferAmount)
+                    nextMove = MoveAction.RotateRight;
+                else if (calcDegrees >= 90 - bufferAmount && calcDegrees < 180)
+                    nextMove = MoveAction.RotateLeft;
+                else
+                    nextMove = MoveAction.Forward;
+
+                debugLabel.Text = $"{name}" +
+                    $"\nDirectionTo: {Position.DirectionTo(nextFollowMovePoint)}" +
+                    $"\nDegrees: {degrees}" +
+                    $"\nFacing: {cardinal}" +
+                    $"\nAngleTo: {angleTo}" +
+                    $"\nCalcFace: {calcCardinal}" +
+                    $"\nCalcDegrees: {calcDegrees}" +
+                    $"\nNextMove: {nextMove}";
+
                 break;
-            case WanderType.Patrol:
+            case MovementType.Chaotic:
+                nextMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
+                break;
+            case MovementType.Patrol:
                 availMoveActions.Remove(MoveAction.RotateLeft);
                 availMoveActions.Remove(MoveAction.RotateRight);
-                randomMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
+                nextMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
                 break;
-            case WanderType.Trailblazer:
+            case MovementType.Trailblazer:
                 int chance = rand.RandiRange(0, 100);
                 if (chance <= 75)
                 {
-                    randomMove = MoveAction.Forward;
+                    nextMove = MoveAction.Forward;
                 }
                 else
                 {
-                    randomMove = rand.RandiRange(0, 1) == 1 ? MoveAction.RotateLeft : MoveAction.RotateRight;
+                    nextMove = rand.RandiRange(0, 1) == 1 ? MoveAction.RotateLeft : MoveAction.RotateRight;
                 }
                 break;
         }
-        if (!CanPerformMoveAction(randomMove))
+        if (!CanPerformMoveAction(nextMove))
         {
-            randomMove = GetFirstUnblockedMove();
+            nextMove = GetFirstUnblockedMove();
         }
-        HandleMoveAction(randomMove);
+        HandleMoveAction(nextMove);
     }
 
     void HandleMoveAction(MoveAction action)
@@ -302,15 +370,20 @@ public partial class NPC : Node3D
             case State.Idle:
                 stateEndTimer.WaitTime = rand.RandiRange(idleTimeMin, idleTimeMax);
                 stateEndTimer.Start();
-                game.Log($"{name} idling for {stateEndTimer.TimeLeft} secs.");
+                game.Log($"{name} idling for {stateEndTimer.TimeLeft} secs.", true);
                 break;
             case State.Wander:
                 stateEndTimer.WaitTime = rand.RandiRange(wanderTimeMin, wanderTimeMax);
                 stateEndTimer.Start();
-                game.Log($"{name} wandering for {stateEndTimer.TimeLeft} secs.");
+                game.Log($"{name} wandering for {stateEndTimer.TimeLeft} secs.", true);
                 break;
             case State.Dead:
                 game.Log($"{name} died.");
+                break;
+            case State.Chase:
+                game.Log($"{name} spotted {spottedTarget.Name}. Starting to chase.");
+                followTarget = spottedTarget; // store here because spottedTarget can be changed/lost during chase or follow
+                movementType = MovementType.Follow;
                 break;
         }
         currentState = newState;
@@ -335,8 +408,62 @@ public partial class NPC : Node3D
         }
     }
 
+    public bool FoundTarget()
+    {
+        bool foundTarget = false;
+        var overlaps = visionArea.GetOverlappingBodies();
+        if (overlaps.Count > 0)
+        {
+            foreach (var overlap in overlaps)
+            {
+                var overlapParent = overlap.GetParent();
+
+                if (overlapParent.GetType() == typeof(Player))
+                {
+                    var playerPosition = overlap.GlobalTransform.Origin;
+                    visionRayCast.LookAt(playerPosition, Vector3.Up);
+                    visionRayCast.ForceRaycastUpdate();
+
+                    if (visionRayCast.IsColliding())
+                    {
+                        var collider = visionRayCast.GetCollider();
+
+                        var colliderParent = ((Node3D)collider).GetParent();
+
+                        if (colliderParent.GetType() == typeof(Player))
+                        {
+                            spottedTarget = (Node3D)colliderParent;
+                            foundTarget = true;
+                        }
+                    }
+                }
+            }
+        }
+        return foundTarget;
+    }
+
+    public void HandleVisionCheckTimerTimeout()
+    {
+        switch (currentState)
+        {
+            case State.Idle:
+            case State.Wander:
+                if (FoundTarget())
+                    SetState(State.Chase); // do something different for non-hostile NPCs like greet player
+                break;
+        }
+    }
+
     public override void _Process(double delta)
     {
+        navAgent.DebugEnabled = game.debugMode;
+        debugLabel.Visible = game.debugMode;
+        if (followTarget != null)
+        {
+            navAgent.TargetPosition = followTarget.GlobalTransform.Origin;
+            nextFollowMovePoint = navAgent.GetNextPathPosition();
+        }
+
         if (!tookActionThisTick)
         {
             //string currentAnim = stateMachine.GetCurrentNode();
@@ -346,7 +473,8 @@ public partial class NPC : Node3D
                     SetState(State.Idle);
                     break;
                 case State.Wander:
-                    MoveRandomStep();
+                case State.Chase:
+                    MoveStep();
                     break;
             }
             tookActionThisTick = true;

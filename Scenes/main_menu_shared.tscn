@@ -70,9 +70,23 @@ theme_override_styles/panel = ExtResource("2_rob53")
 [node name="VBoxContainer" type="VBoxContainer" parent="OptionsPanelContainer"]
 layout_mode = 2
 
+[node name="ControlsLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Controls:
+WASD - Forward/StrafeRight/StrafeLeft/Back
+QE - RotateLeft/RotateRight
+F - Interact
+1,2,3 - Equip Item
+Space - Use Equipped Item
+Escape - Hide/Show Menu"
+
 [node name="MoveStyleCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Teleport style movement"
+
+[node name="DebugModeCheckButton" type="CheckButton" parent="OptionsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug mode"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -85,6 +99,13 @@ text = "FOV"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
+min_value = 1.0
+max_value = 179.0
+value = 75.0
+
+[node name="FOVSettingDisplayLabel" type="Label" parent="OptionsPanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "075"
 
 [node name="BackButton" type="Button" parent="OptionsPanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -93,4 +114,7 @@ text = "Back"
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/OptionsButton" to="." method="OptionsButtonPressed"]
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]
+[connection signal="toggled" from="OptionsPanelContainer/VBoxContainer/MoveStyleCheckButton" to="." method="TeleportModeToggled"]
+[connection signal="toggled" from="OptionsPanelContainer/VBoxContainer/DebugModeCheckButton" to="." method="DebugModeOptionToggled"]
+[connection signal="value_changed" from="OptionsPanelContainer/VBoxContainer/HBoxContainer/FOVHSlider" to="." method="FOVOptionChanged"]
 [connection signal="pressed" from="OptionsPanelContainer/VBoxContainer/BackButton" to="." method="BackButtonPressed"]

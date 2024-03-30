@@ -11,11 +11,7 @@ public partial class Player : Node3D
     private Game game;
     private AudioManager audioMgr;
 
-    private Label interactLabel;
-    private Label debugInfoLabel;
-    private Label logLabel;
-    private ScrollContainer logScroll;
-
+    private Camera3D cam;
     private RayCast3D forwardRay;
     private RayCast3D backRay;
     private RayCast3D leftRay;
@@ -38,6 +34,11 @@ public partial class Player : Node3D
     private PanelContainer item1Panel;
     private PanelContainer item2Panel;
     private PanelContainer item3Panel;
+    private Label interactLabel;
+    private PanelContainer debugInfoPanel;
+    private Label debugInfoLabel;
+    private Label logLabel;
+    private ScrollContainer logScroll;
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
 
@@ -52,9 +53,12 @@ public partial class Player : Node3D
     public override void _Ready()
     {
         game = GetNode<Game>("/root/Game");
-        game.DebugLog += HandleDebugLogSignal;
+        game.DisplayLog += HandleDisplayLogSignal;
         game.Tick += () => tookActionThisTick = false;
         audioMgr = GetNode<AudioManager>("/root/AudioManager");
+
+        cam = GetNode<Camera3D>("Camera3D");
+
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
@@ -64,7 +68,8 @@ public partial class Player : Node3D
         interactLabel = GetNode<Label>("UserInterface/InteractLabel");
         logScroll = GetNode<ScrollContainer>("UserInterface/LogPanelContainer/ScrollContainer");
         logLabel = logScroll.GetNode<Label>("LogLabel");
-        debugInfoLabel = GetNode<Label>("UserInterface/DebugInfoPanelContainer/DebugInfoLabel");
+        debugInfoPanel = GetNode<PanelContainer>("UserInterface/DebugInfoPanelContainer");
+        debugInfoLabel = debugInfoPanel.GetNode<Label>("DebugInfoLabel");
         anim = GetNode<AnimationPlayer>("AnimationPlayer");
 
         item1Panel = GetNode<PanelContainer>("UserInterface/StatsPanelContainer/HBoxContainer/Item1Panel");
@@ -207,13 +212,20 @@ public partial class Player : Node3D
 
     public override void _Process(double delta)
     {
+        float degrees = NormalizeDegrees(Rotation.Y);
+        string cardinal = GetCardinalDirectionFromNormalizedDegrees(degrees);
         debugInfoLabel.Text = $"Map: {GetParent().Name}" +
             $"\nPosition (X: {System.Math.Round(Position.X, 2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z, 2)})" +
-            $"\nRotationDegrees {Rotation.Y}" +
+            $"\nDegrees: {degrees}" +
+            $"\nFacing: {cardinal}" +
             $"\nEquipped: {equippedItem}" +
             $"\nCanUse: {canUse}" +
             $"\nCanEquip: {canEquip}" +
             $"\nFPS: {Engine.GetFramesPerSecond()}";
+        debugInfoPanel.Visible = game.debugMode;
+
+        if (cam.Fov != game.fov)
+            cam.Fov = game.fov;
 
         if (Input.IsActionJustPressed("interact"))
         {
@@ -279,11 +291,11 @@ public partial class Player : Node3D
         base._Process(delta);
     }
 
-    private void HandleDebugLogSignal()
+    private void HandleDisplayLogSignal()
     {
-        SyncDebugLogText();
+        SyncLogText();
     }
-    public async void SyncDebugLogText()
+    public async void SyncLogText()
     {
         logLabel.Text = game.allLogText;
         // wait a tiny bit here, otherwise the vertical scroll max value won't update in time for us to scroll to the bottom...
@@ -294,7 +306,7 @@ public partial class Player : Node3D
     // without this, disposed object will still receive signals
     public override void _ExitTree()
     {
-        game.DebugLog -= HandleDebugLogSignal;
+        game.DisplayLog -= HandleDisplayLogSignal;
         base._ExitTree();
     }
 }

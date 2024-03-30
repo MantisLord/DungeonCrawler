@@ -144,7 +144,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
-transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669873, 0.00937422, 0.00242358, 0.00250005, 0.692, -2.1, -0.635)
+transform = Transform3D(-0.00224149, -0.0012941, 0.00965924, 0.00266452, -0.00961518, -0.000669874, 0.00937422, 0.00242358, 0.00250005, 0.692, -2.1, -0.635)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

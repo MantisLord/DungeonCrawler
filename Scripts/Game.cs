@@ -1,19 +1,29 @@
 using Godot;
 using Godot.Collections;
+using System.Diagnostics;
+using static AudioManager;
 
 public partial class Game : Node
 {
+    private AudioManager audioMgr;
+
     private const float TILE_SIZE = 2.0f;
     private const double TICK_TIME = 1.0f;
+    private const int TIME_TO_ESCAPE = 120;
     private const string LOG_DEFAULT_TEXT = "Cyclopes - Top Secret Messages\r\n--------------------------------";
     private Timer npcActionTick;
 
+    public Timer timeToEscape;
+    public bool timerStarted;
+
     [Signal] public delegate void TickEventHandler();
     [Signal] public delegate void DisplayLogEventHandler();
+    [Signal] public delegate void EscapeTimeoutEventHandler();
     public string allLogText = LOG_DEFAULT_TEXT;
 
     public Scene currentScene = Scene.main_menu;
     public bool gameOver = false;
+    public bool returningFromDungeon = false;
 
     public bool foundItem1 = false;
     public bool foundItem2 = false;
@@ -67,6 +77,7 @@ public partial class Game : Node
         SceneTransitionArea3D,
         TorchPickupArea3D,
         AmphoraPickupArea3D,
+        SpearPickupArea3D,
     }
 
     public enum Item
@@ -79,6 +90,9 @@ public partial class Game : Node
     
     public void Restart()
     {
+        timeToEscape.Stop();
+        timeToEscape.WaitTime = TIME_TO_ESCAPE;
+        timerStarted = false;
         allLogText = LOG_DEFAULT_TEXT;
         foundItem1 = false;
         foundItem2 = false;
@@ -113,13 +127,21 @@ public partial class Game : Node
 
     public override void _Ready()
     {
+        audioMgr = GetNode<AudioManager>("/root/AudioManager");
         npcActionTick = new Timer
         {
             Autostart = true,
             WaitTime = TICK_TIME
         };
+        timeToEscape = new Timer
+        {
+            Autostart = false,
+            WaitTime = TIME_TO_ESCAPE,
+        };
         npcActionTick.Timeout += () => EmitSignal(SignalName.Tick);
+        timeToEscape.Timeout += () => EmitSignal(SignalName.EscapeTimeout);
         AddChild(npcActionTick);
+        AddChild(timeToEscape);
         base._Ready();
     }
 
@@ -134,6 +156,24 @@ public partial class Game : Node
     {
         GetTree().ChangeSceneToFile($"res://Scenes/{scene}.tscn");
         currentScene = scene;
+        
+        switch (scene)
+        {
+            case Scene.outside:
+                if (!timerStarted)
+                {
+                    audioMgr.StopMusic();
+                }
+                audioMgr.Play(Audio.AmbienceOutside, AudioChannel.Ambient);
+                break;
+            case Scene.dungeon:
+                audioMgr.StopAmbience();
+                if (!timerStarted)
+                {
+                    audioMgr.Play(Audio.MusicDungeon, AudioChannel.Music);
+                }
+                break;
+        }
     }
 
     public void Log(string msg, bool debugOnly = false)

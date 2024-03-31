@@ -8,7 +8,7 @@ size = Vector3(2, 2, 2)
 [node name="SwordPickup" type="Node3D"]
 
 [node name="Sword" parent="." instance=ExtResource("1_nhgbi")]
-transform = Transform3D(0.01, 0, 0, 0, -4.37114e-10, -0.01, 0, 0.01, -4.37114e-10, 0, 0, 0)
+transform = Transform3D(0.01, 0, 0, 0, -4.37114e-10, -0.01, 0, 0.01, -4.37114e-10, 0, 0, 0.5)
 
 [node name="SwordPickupArea3D" type="Area3D" parent="."]
 

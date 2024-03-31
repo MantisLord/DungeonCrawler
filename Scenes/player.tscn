@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=47 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
@@ -6,6 +6,7 @@
 [ext_resource type="StyleBox" uid="uid://dgbbrwj3sm14p" path="res://Assets/Styles/playerUIPanel.tres" id="4_yr6r6"]
 [ext_resource type="Texture2D" uid="uid://bxb1h4cjec53k" path="res://Assets/Textures/item_none.png" id="5_8gkou"]
 [ext_resource type="FontFile" uid="uid://cv3vn1d8xm048" path="res://Assets/Font/DIOGENES.ttf" id="5_f3r1y"]
+[ext_resource type="AnimationLibrary" uid="uid://crhjn78n0d0at" path="res://Assets/player_anims.res" id="5_fn0f7"]
 [ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="5_owd4h"]
 [ext_resource type="AudioStream" uid="uid://c7nl6n81155sf" path="res://Assets/Audio/interactSuccess.wav" id="6_sd0j0"]
 [ext_resource type="AudioStream" uid="uid://bue8hemmkb3bb" path="res://Assets/Audio/Step/step.wav" id="7_th3ra"]
@@ -43,186 +44,6 @@ height = 1.0
 albedo_color = Color(1, 0, 0, 1)
 metallic = 1.0
 roughness = 0.5
-
-[sub_resource type="Animation" id="Animation_7wxft"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sword:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0.692, -2.1, -0.635)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Amphora:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(-0.254818, -0.0296706, 0.333358)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Amphora:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(0.751, -1.653, -0.809)]
-}
-
-[sub_resource type="Animation" id="Animation_6erxf"]
-resource_name = "RaiseSword"
-length = 0.3
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sword:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.692, -2.1, -0.635), Vector3(0.692, 0, -0.635)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sword:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.0663225, 1.31772, 2.87107), Vector3(0.0663225, 1.31772, 2.87107)]
-}
-
-[sub_resource type="Animation" id="Animation_0gtdv"]
-resource_name = "SwingSword"
-length = 0.3
-step = 0.05
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sword:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.15, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0.692, 0, -0.635), Vector3(0, 0, -0.635), Vector3(-1, -0.25, -0.635)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sword:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.15, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector3(0.0670375, 1.31753, 2.87126), Vector3(1.5708, 1.5708, 1.5708), Vector3(1.0472, 1.5708, 0.785398)]
-}
-
-[sub_resource type="Animation" id="Animation_v240c"]
-resource_name = "RaiseTorch"
-length = 0.3
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Torch:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.692, -2, -0.635), Vector3(2, -0.75, -1.75)]
-}
-
-[sub_resource type="Animation" id="Animation_hxw52"]
-resource_name = "RaiseAmphora"
-length = 0.3
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Amphora:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0.75099, -1.65253, -0.808558), Vector3(0.751, -0.5, -0.809)]
-}
-
-[sub_resource type="Animation" id="Animation_36m73"]
-resource_name = "DrinkAmphora"
-length = 1.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Amphora:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(0.751, -0.5, -0.809), Vector3(0, -0.3, -0.85), Vector3(0, -0.3, -0.85), Vector3(0.751, -0.5, -0.809)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Amphora:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(-0.255219, -0.0267032, 0.333662), Vector3(0.785398, 0, 0), Vector3(0.785398, 0, 0), Vector3(-0.255219, -0.0267032, 0.333662)]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"PotionReachedLips"
-}]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_87lao"]
-_data = {
-"DrinkAmphora": SubResource("Animation_36m73"),
-"RESET": SubResource("Animation_7wxft"),
-"RaiseAmphora": SubResource("Animation_hxw52"),
-"RaiseSword": SubResource("Animation_6erxf"),
-"RaiseTorch": SubResource("Animation_v240c"),
-"SwingSword": SubResource("Animation_0gtdv")
-}
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iswf5"]
 
@@ -326,7 +147,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
-transform = Transform3D(-0.00224131, -0.00128741, 0.00966018, 0.00266648, -0.00961513, -0.000662739, 0.00937371, 0.00242733, 0.00249833, 0.692, -2.1, -0.635)
+transform = Transform3D(-0.00224131, -0.00128741, 0.00966018, 0.00266648, -0.00961513, -0.00066274, 0.00937371, 0.00242733, 0.00249833, 0.692, -2.1, -0.635)
 
 [node name="Torch" parent="." instance=ExtResource("29_5e60y")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.692, -2, -0.635)
@@ -334,9 +155,19 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.692,
 [node name="Amphora" parent="." instance=ExtResource("4_r611r")]
 transform = Transform3D(0.94698, -0.320007, -0.0287083, 0.316652, 0.914435, 0.252069, -0.0544122, -0.247795, 0.967283, 0.751, -1.653, -0.809)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="TorchAnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_87lao")
+"": ExtResource("5_fn0f7")
+}
+
+[node name="SwordAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("5_fn0f7")
+}
+
+[node name="AmphoraAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("5_fn0f7")
 }
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
@@ -373,6 +204,20 @@ text = "
 
 
 GAME OVER - WHAT HAPPENED"
+
+[node name="TimerLabel" type="Label" parent="UserInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -16.5
+offset_right = 158.0
+offset_bottom = 16.5
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_f3r1y")
+theme_override_font_sizes/font_size = 20
+text = "TIME TO ESCAPE: "
 
 [node name="InteractLabel" type="Label" parent="UserInterface"]
 layout_mode = 1
@@ -501,6 +346,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 0, 0, 0.196078)
+
+[node name="RestoreRect" type="ColorRect" parent="UserInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 1, 0, 0.196078)
 
 [node name="InteractAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("6_sd0j0")

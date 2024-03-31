@@ -5,6 +5,7 @@ using static Game;
 public partial class MainMenu : Node
 {
     private Game game;
+    private AudioManager audioMgr;
     private PanelContainer mainPanel;
     private PanelContainer optionsPanel;
     private Label fovSettingDisplayLabel;

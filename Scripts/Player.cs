@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using static Game;
-using static NPC;
+using static AudioManager;
 
 public partial class Player : Node3D
 {
@@ -10,6 +10,7 @@ public partial class Player : Node3D
     private const float MOVE_SPEED = 0.3f;
 
     private Game game;
+    private AudioManager audioMgr;
 
     private Camera3D cam;
     private RayCast3D forwardRay;
@@ -38,6 +39,8 @@ public partial class Player : Node3D
     private ProgressBar healthBar;
     private ColorRect hitRect;
     private Label gameOverLabel;
+    private ColorRect restoreRect;
+    private Label timerLabel;
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
     private Texture2D torchTexture = GD.Load<Texture2D>("res://Assets/Textures/item_torch.png");
@@ -46,7 +49,9 @@ public partial class Player : Node3D
     private string keycodeString;
     private InteractableArea interactAreaType;
     private Node3D interactAreaParent;
-    private AnimationPlayer anim;
+    private AnimationPlayer swordAnim;
+    private AnimationPlayer torchAnim;
+    private AnimationPlayer amphoraAnim;
 
     private int health = 100;
     private int amphoraRestoreMin = 10;
@@ -76,16 +81,20 @@ public partial class Player : Node3D
     public override void _Ready()
     {
         game = GetNode<Game>("/root/Game");
+        audioMgr = GetNode<AudioManager>("/root/AudioManager");
         game.gameOver = false;
         game.DisplayLog += HandleDisplayLogSignal;
         game.Tick += () => tookActionThisTick = false;
+        game.EscapeTimeout += HandleEscapeTimeoutSignal;
 
         cam = GetNode<Camera3D>("Camera3D");
         forwardRay = GetNode<RayCast3D>("ForwardRayCast3D");
         backRay = GetNode<RayCast3D>("BackRayCast3D");
         leftRay = GetNode<RayCast3D>("LeftRayCast3D");
         rightRay = GetNode<RayCast3D>("RightRayCast3D");
-        anim = GetNode<AnimationPlayer>("AnimationPlayer");
+        swordAnim = GetNode<AnimationPlayer>("SwordAnimationPlayer");
+        torchAnim = GetNode<AnimationPlayer>("TorchAnimationPlayer");
+        amphoraAnim = GetNode<AnimationPlayer>("AmphoraAnimationPlayer");
 
         torchLight = GetNode<Node3D>("Torch/Light");
 
@@ -104,6 +113,8 @@ public partial class Player : Node3D
         healthBar = GetNode<ProgressBar>("UserInterface/StatsPanelContainer/HBoxContainer/HPProgressBar");
         hitRect = GetNode<ColorRect>("UserInterface/HitRect");
         gameOverLabel = GetNode<Label>("UserInterface/GameOverLabel");
+        restoreRect = GetNode<ColorRect>("UserInterface/RestoreRect");
+        timerLabel = GetNode<Label>("UserInterface/TimerLabel");
 
         interactAudio = GetNode<AudioStreamPlayer3D>("InteractAudioStreamPlayer3D");
         stepAudio = GetNode<AudioStreamPlayer3D>("StepAudioStreamPlayer3D");
@@ -174,6 +185,7 @@ public partial class Player : Node3D
 
     private async void UnequipItem()
     {
+        var animPlayer = new AnimationPlayer();
         canUse = false;
         canEquip = false;
         var style = new StyleBoxFlat
@@ -181,14 +193,15 @@ public partial class Player : Node3D
             BgColor = new Color(0, 0, 0, 0),
         };
 
-        anim.PlayBackwards($"Raise{equippedItem}");
         switch (equippedItem)
         {
             case Item.Sword:
+                animPlayer = swordAnim;
                 item1Panel.AddThemeStyleboxOverride("panel", style);
                 swordSheathAudio.Play();
                 break;
             case Item.Torch:
+                animPlayer = torchAnim;
                 item2Panel.AddThemeStyleboxOverride("panel", style);
                 if (torchLight.Visible)
                 {
@@ -198,9 +211,12 @@ public partial class Player : Node3D
                 torchLight.Visible = false;
                 break;
             case Item.Amphora:
+                animPlayer = amphoraAnim;
+                amphoraEquipAudio.Play();
                 item3Panel.AddThemeStyleboxOverride("panel", style);
                 break;
         }
+        animPlayer.PlayBackwards($"Raise{equippedItem}");
         game.Log($"Unequipped {equippedItem}.");
         await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
         equippedItem = Item.None;
@@ -208,6 +224,7 @@ public partial class Player : Node3D
     }
     private async void EquipItem(Item newItem)
     {
+        var animPlayer = new AnimationPlayer();
         canUse = false;
         canEquip = false;
         var style = new StyleBoxFlat
@@ -221,18 +238,22 @@ public partial class Player : Node3D
             switch (newItem)
             {
                 case Item.Sword:
+                    animPlayer = swordAnim;
                     swordUnsheathAudio.Play();
                     item1Panel.AddThemeStyleboxOverride("panel", style);
                     break;
                 case Item.Torch:
+                    animPlayer = torchAnim;
                     // take out unlit torch sound here
                     item2Panel.AddThemeStyleboxOverride("panel", style);
                     break;
                 case Item.Amphora:
+                    animPlayer = amphoraAnim;
+                    amphoraEquipAudio.Play();
                     item3Panel.AddThemeStyleboxOverride("panel", style);
                     break;
             }
-            anim.Play($"Raise{newItem}");
+            animPlayer.Play($"Raise{newItem}");
             await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
             canUse = true;
             canEquip = true;
@@ -251,10 +272,10 @@ public partial class Player : Node3D
                 canEquip = false;
                 swinging = true;
                 swordSwingAudio.Play();
-                anim.Play("SwingSword");
+                swordAnim.Play("SwingSword");
                 await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED * 2), SceneTreeTimer.SignalName.Timeout);
                 swinging = false;
-                anim.Play($"RaiseSword");
+                swordAnim.Play($"RaiseSword");
                 await ToSignal(GetTree().CreateTimer(SWORD_ANIM_SPEED), SceneTreeTimer.SignalName.Timeout);
                 canUse = true;
                 canEquip = true;
@@ -275,7 +296,7 @@ public partial class Player : Node3D
             case Item.Amphora:
                 canUse = false;
                 canEquip = false;
-                anim.Play("DrinkAmphora");
+                amphoraAnim.Play("DrinkAmphora");
                 await ToSignal(GetTree().CreateTimer(1.5f), SceneTreeTimer.SignalName.Timeout);
                 canUse = true;
                 canEquip = true;
@@ -289,11 +310,9 @@ public partial class Player : Node3D
         amphoraDrinkAudio.Play();
         var restoreAmount = rand.RandiRange(amphoraRestoreMin, amphoraRestoreMax);
         game.Log($"You drank from the {Item.Amphora}. It restored {restoreAmount} HP.");
-        hitRect.Color = new Color(0, 255, 0, 25);
-        hitRect.Visible = true;
+        restoreRect.Visible = true;
         await ToSignal(GetTree().CreateTimer(0.1f), SceneTreeTimer.SignalName.Timeout);
-        hitRect.Visible = false;
-        hitRect.Color = new Color(255, 0, 0, 25);
+        restoreRect.Visible = false;
     }
 
     private void SetInteractKeycodeString()
@@ -311,8 +330,13 @@ public partial class Player : Node3D
             case InteractableArea.SwordPickupArea3D:
             case InteractableArea.TorchPickupArea3D:
             case InteractableArea.AmphoraPickupArea3D:
+            case InteractableArea.SpearPickupArea3D:
                 interactAreaType = interactArea;
                 interactAreaParent = area.GetParent<Node3D>();
+
+                if (interactArea == InteractableArea.SpearPickupArea3D)
+                    interactAreaParent = interactAreaParent.GetNode<Node3D>("Wooden Spear");
+
                 interactLabel.Text = $"Press [{keycodeString}] to pick up {area.Name.ToString().Replace("PickupArea3D", "")}!";
                 break;
             case InteractableArea.SceneTransitionArea3D:
@@ -335,6 +359,7 @@ public partial class Player : Node3D
             case InteractableArea.SceneTransitionArea3D:
             case InteractableArea.TorchPickupArea3D:
             case InteractableArea.AmphoraPickupArea3D:
+            case InteractableArea.SpearPickupArea3D:
                 interactLabel.Text = "";
                 interactAreaType = InteractableArea.None;
                 interactAreaParent = null;
@@ -369,13 +394,22 @@ public partial class Player : Node3D
                 AddItem(Item.Amphora);
                 interactAreaParent.QueueFree();
                 break;
+            case InteractableArea.SpearPickupArea3D:
+                audioMgr.StopMusic();
+                audioMgr.Play(Audio.MusicEscape, AudioChannel.Music);
+                interactAreaParent.QueueFree();
+                game.timeToEscape.Start();
+                game.timerStarted = true;
+                game.Log("The ground rumbles as you grab the spear.\nCyclopes bellow from all corners of the island, somehow of one mind.\nYou must escape before they catch you!");
+                break;
         }
     }
 
     // todo: more specific hitboxes for players?
     public async void ReceiveHit(Node3D attacker, int damageDealt)
     {
-        game.Log($"{attacker.Name} hit you for {damageDealt} damage.");
+        var npcAttacker = (NPC)attacker;
+        game.Log($"{npcAttacker.name} hit you for {damageDealt} damage.");
 
         // need sounds for this
         //receiveHitAudioPlayer.Play();
@@ -389,11 +423,30 @@ public partial class Player : Node3D
 
         if (health <= 0)
         {
-            game.gameOver = true;
-            menu.Visible = true;
-            gameOverLabel.Visible = true;
-            gameOverLabel.Text = $"\n\n\nGAME OVER - You were killed by a {attacker.Name}!";
+            GameOver($"\n\n\nYou have been slain by a {npcAttacker.name}! Your spirit will haunt the island for eternity!");
         }
+    }
+
+    private void GameOver(string reason)
+    {
+        game.returningFromDungeon = false;
+        game.gameOver = true;
+        menu.Visible = true;
+        gameOverLabel.Visible = true;
+        gameOverLabel.Text = reason;
+    }
+
+    private void ItemSwitchHelper(Item newItem)
+    {
+        if (equippedItem != Item.None && equippedItem != newItem)
+        {
+            UnequipItem();
+            EquipItem(newItem);
+        }
+        else if (equippedItem == newItem) // must be trying to just put away instead of switch
+            UnequipItem();
+        else
+            EquipItem(newItem);
     }
 
     public override void _Process(double delta)
@@ -401,7 +454,7 @@ public partial class Player : Node3D
         float degrees = NormalizeDegrees(Rotation.Y);
         string cardinal = GetCardinalDirectionFromNormalizedDegrees(degrees);
         debugInfoLabel.Text = $"Map: {GetParent().Name}" +
-            $"\nPosition (X: {System.Math.Round(Position.X, 2)}, Y: {System.Math.Round(Position.Y, 2)}, Z: {System.Math.Round(Position.Z, 2)})" +
+            $"\nPosition (X: {Math.Round(Position.X, 2)}, Y: {Math.Round(Position.Y, 2)}, Z: {Math.Round(Position.Z, 2)})" +
             $"\nDegrees: {degrees}" +
             $"\nFacing: {cardinal}" +
             $"\nEquipped: {equippedItem}" +
@@ -409,6 +462,12 @@ public partial class Player : Node3D
             $"\nCanEquip: {canEquip}" +
             $"\nFPS: {Engine.GetFramesPerSecond()}";
         debugInfoPanel.Visible = game.debugMode;
+
+        if (game.timerStarted)
+        {
+            timerLabel.Visible = true;
+            timerLabel.Text = $"TIME TO ESCAPE: {game.timeToEscape.TimeLeft:00:00}";
+        }
 
         if (cam.Fov != game.fov)
             cam.Fov = game.fov;
@@ -422,39 +481,15 @@ public partial class Player : Node3D
         }
         if (Input.IsActionJustPressed("equip_item1") && game.foundItem1 && canEquip)
         {
-            if (equippedItem != Item.None && equippedItem != Item.Sword)
-            {
-                UnequipItem();
-                EquipItem(Item.Sword);
-            }
-            else if (equippedItem == Item.Sword) // must be trying to just put away instead of switch
-                UnequipItem();
-            else
-                EquipItem(Item.Sword);
+            ItemSwitchHelper(Item.Sword);
         }
         if (Input.IsActionJustPressed("equip_item2") && game.foundItem2 && canEquip)
         {
-            if (equippedItem != Item.None && equippedItem != Item.Torch)
-            {
-                UnequipItem();
-                EquipItem(Item.Torch);
-            }
-            else if (equippedItem == Item.Torch)
-                UnequipItem();
-            else
-                EquipItem(Item.Torch);
+            ItemSwitchHelper(Item.Torch);
         }
         if (Input.IsActionJustPressed("equip_item3") && game.foundItem3 && canEquip)
         {
-            if (equippedItem != Item.None && equippedItem != Item.Amphora)
-            {
-                UnequipItem();
-                EquipItem(Item.Amphora);
-            }
-            else if (equippedItem == Item.Amphora)
-                UnequipItem();
-            else
-                EquipItem(Item.Amphora);
+            ItemSwitchHelper(Item.Amphora);
         }
         if (Input.IsActionJustPressed("use_item") && canUse)
         {
@@ -498,6 +533,10 @@ public partial class Player : Node3D
         base._Process(delta);
     }
 
+    private void HandleEscapeTimeoutSignal()
+    {
+        GameOver("The cyclopes surround you, too many to fight off. Your last window to the mortal world is a massive foot descending upon your head.");
+    }
     private void HandleDisplayLogSignal()
     {
         SyncLogText();
@@ -514,6 +553,7 @@ public partial class Player : Node3D
     public override void _ExitTree()
     {
         game.DisplayLog -= HandleDisplayLogSignal;
+        game.EscapeTimeout -= HandleEscapeTimeoutSignal;
         base._ExitTree();
     }
 }

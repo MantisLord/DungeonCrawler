@@ -344,9 +344,7 @@ public partial class NPC : Node3D
                 nextMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
                 break;
             case MovementType.Patrol:
-                availMoveActions.Remove(MoveAction.RotateLeft);
-                availMoveActions.Remove(MoveAction.RotateRight);
-                nextMove = availMoveActions[rand.RandiRange(0, availMoveActions.Count)];
+                nextMove = MoveAction.Forward;
                 break;
             case MovementType.Trailblazer:
                 int chance = rand.RandiRange(0, 100);

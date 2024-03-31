@@ -993,6 +993,7 @@ bone_name = "eye1"
 bone_idx = 5
 
 [node name="VisionArea3D" type="Area3D" parent="Joints/Skeleton3D/Eye"]
+collision_layer = 2
 
 [node name="VisionMeshInstance3D" type="MeshInstance3D" parent="Joints/Skeleton3D/Eye/VisionArea3D"]
 transform = Transform3D(1, -7.98317e-07, 1.24098e-06, 1.24098e-06, -4.37114e-08, -1, 7.98317e-07, 1, -4.37103e-08, 0.00103775, 0.000518799, -1017.75)

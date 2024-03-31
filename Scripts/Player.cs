@@ -2,7 +2,6 @@ using Godot;
 using System;
 using static Game;
 using static AudioManager;
-using System.Diagnostics;
 
 public partial class Player : Node3D
 {
@@ -337,7 +336,7 @@ public partial class Player : Node3D
     private void OnArea3DEntered(Area3D area)
     {
         Enum.TryParse(area.Name, out InteractableArea interactArea);
-        if (interactArea != InteractableArea.None)
+        if (interactArea != InteractableArea.None && interactArea != InteractableArea.HitboxArea3D)
         {
             interactAreaType = interactArea;
             interactAreaParent = area.GetParent<Node3D>();
@@ -431,7 +430,7 @@ public partial class Player : Node3D
                     // win
                     endRect.Visible = true;
                     endLabel.Visible = true;
-                    GameOver("\n\nVICTORY");
+                    GameOver($"\n\nVICTORY - {game.cyclopsKilled} Cyclopes slain.");
                 }
                 break;
         }

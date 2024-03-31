@@ -65,6 +65,7 @@ public partial class NPC : Node3D
     private MeshInstance3D cyclopsMesh6;
 
     private CollisionShape3D collision;
+    private StaticBody3D staticBody;
 
     public enum Animation
     {
@@ -193,6 +194,7 @@ public partial class NPC : Node3D
         cyclopsMesh6 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n6_low");
 
         collision = GetNode<CollisionShape3D>("StaticBody3D/CollisionShape3D");
+        staticBody = GetNode<StaticBody3D>("StaticBody3D");
 
         rand.Randomize();
 
@@ -285,6 +287,8 @@ public partial class NPC : Node3D
 
     void TryMoveStep()
     {
+        if (tween != null && tween.IsRunning())
+            return;
         if (movementType == MovementType.None)
         {
             return;
@@ -460,13 +464,24 @@ public partial class NPC : Node3D
         if (currentState == State.Dead)
             return;
 
-        currentHealth -= damageDealt;
-        game.Log($"{attacker.Name} hit {name}'s {hitArea.GetParent().Name} and dealt {damageDealt} damage! {name} has {currentHealth} HP remaining.");
+        if (currentState != State.Chase && currentState != State.Attack)
+        {
+            game.Log($"You performed a critical sneak attack on {name}'s {hitArea.GetParent().Name}!");
+            currentHealth = 0;
+        }
+        else
+        {
+            currentHealth -= damageDealt;
+            game.Log($"{attacker.Name} hit {name}'s {hitArea.GetParent().Name} and dealt {damageDealt} damage! {name} has {currentHealth} HP remaining.");
+        }
         if (currentHealth <= 0)
         {
+            game.cyclopsKilled++;
             SetState(State.Dead);
             deathAudio.Play();
             collision.Disabled = true;
+            staticBody.CollisionLayer = 69;
+            staticBody.Visible = false;
         }
         else
         {
@@ -556,30 +571,33 @@ public partial class NPC : Node3D
         if (game.gameOver)
             return;
 
-        if (!tookActionThisTick)
+        switch (currentState)
         {
-            switch (currentState)
-            {
-                case State.None:
-                    SetState(State.Idle);
-                    break;
-                case State.Wander:
+            case State.None:
+                SetState(State.Idle);
+                break;
+            case State.Wander:
+                TryMoveStep();
+                break;
+            case State.Chase:
+                if (ReachedTarget() && FoundTarget())
+                {
+                    movementType = MovementType.None;
+                    if (hostile && !tookActionThisTick)
+                    {
+                        SetState(State.Attack);
+                        tookActionThisTick = true;
+                    }
+                }
+                else
+                {
+                    movementType = MovementType.Follow;
                     TryMoveStep();
-                    break;
-                case State.Chase:
-                    if (ReachedTarget() && FoundTarget())
-                    {
-                        movementType = MovementType.None;
-                        if (hostile)
-                            SetState(State.Attack);
-                    }
-                    else
-                    {
-                        movementType = MovementType.Follow;
-                        TryMoveStep();
-                    }
-                    break;
-                case State.Attack:
+                }
+                break;
+            case State.Attack:
+                if (!tookActionThisTick)
+                {
                     if (hostile && ReachedTarget() && FoundTarget())
                     {
                         SetState(State.Attack);
@@ -591,9 +609,9 @@ public partial class NPC : Node3D
                         movementType = MovementType.Follow;
                         SetState(State.Chase);
                     }
-                    break;
-            }
-            tookActionThisTick = true;
+                    tookActionThisTick = true;
+                }
+                break;
         }
     }
 }

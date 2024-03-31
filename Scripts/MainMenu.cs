@@ -58,8 +58,11 @@ public partial class MainMenu : Node
 
     void Play()
     {
-        introLabel.Visible = false;
-        blackRect.Visible = false;
+        if (introLabel != null && blackRect !=  null)
+        {
+            introLabel.Visible = false;
+            blackRect.Visible = false;
+        }
         game.Restart();
         game.ChangeScene(Scene.outside);
     }

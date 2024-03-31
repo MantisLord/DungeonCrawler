@@ -103,6 +103,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.001, -18)
 wander = false
 movementType = 0
 
+[node name="Cyclops5" parent="." instance=ExtResource("15_u1rip")]
+transform = Transform3D(-1, 0, -8.9407e-08, 0, 1, 0, 8.9407e-08, 0, -1, 0, -0.001, -44)
+wander = false
+movementType = 0
+
 [node name="Cyclops2" parent="." instance=ExtResource("15_u1rip")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8, -0.001, 4)
 randomIdle = false

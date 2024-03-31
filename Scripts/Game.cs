@@ -28,6 +28,7 @@ public partial class Game : Node
     public bool foundItem1 = false;
     public bool foundItem2 = false;
     public bool foundItem3 = false;
+    public int cyclopsKilled = 0;
 
     // menu settings
     public bool debugMode = false;
@@ -91,6 +92,8 @@ public partial class Game : Node
     
     public void Restart()
     {
+        health = 100;
+        cyclopsKilled = 0;
         timeToEscape.Stop();
         timeToEscape.WaitTime = TIME_TO_ESCAPE;
         timerStarted = false;

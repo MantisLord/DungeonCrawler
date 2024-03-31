@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://j7c4rxxa0usc"]
+[gd_scene load_steps=30 format=3 uid="uid://j7c4rxxa0usc"]
 
 [ext_resource type="Texture2D" uid="uid://xvuefv2r0nr3" path="res://Assets/Sky/EveningSkyHDRI027B_4K-HDR.exr" id="1_bhkx5"]
 [ext_resource type="Script" path="res://Scripts/Outside.cs" id="1_f01d8"]
@@ -85,6 +85,9 @@ shader_parameter/edge_color = Color(0, 0, 0, 1)
 shader_parameter/wave = SubResource("NoiseTexture2D_bra04")
 shader_parameter/texture_normal = SubResource("NoiseTexture2D_gt7i6")
 shader_parameter/texture_normal2 = SubResource("NoiseTexture2D_ojf06")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eos00"]
+size = Vector3(2, 2, 2)
 
 [node name="Outside" type="Node3D"]
 script = ExtResource("1_f01d8")
@@ -853,3 +856,9 @@ surface_material_override/0 = SubResource("ShaderMaterial_coax2")
 
 [node name="Boat" parent="." instance=ExtResource("15_6nvns")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.6346, -0.0130997, 50.4386)
+
+[node name="EscapeArea3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.2965, 0.91371, 47.6514)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="EscapeArea3D"]
+shape = SubResource("BoxShape3D_eos00")

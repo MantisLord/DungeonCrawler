@@ -2,6 +2,7 @@ using Godot;
 using System;
 using static Game;
 using static AudioManager;
+using System.Diagnostics;
 
 public partial class Player : Node3D
 {
@@ -41,6 +42,9 @@ public partial class Player : Node3D
     private Label gameOverLabel;
     private ColorRect restoreRect;
     private Label timerLabel;
+    private Label endLabel;
+    private TextureRect endRect;
+    private Button cancelButton;
 
     private Texture2D swordTexture = GD.Load<Texture2D>("res://Assets/Textures/item_sword.png");
     private Texture2D torchTexture = GD.Load<Texture2D>("res://Assets/Textures/item_torch.png");
@@ -53,7 +57,6 @@ public partial class Player : Node3D
     private AnimationPlayer torchAnim;
     private AnimationPlayer amphoraAnim;
 
-    private int health = 100;
     private int amphoraRestoreMin = 10;
     private int amphoraRestoreMax = 15;
 
@@ -115,6 +118,9 @@ public partial class Player : Node3D
         gameOverLabel = GetNode<Label>("UserInterface/GameOverLabel");
         restoreRect = GetNode<ColorRect>("UserInterface/RestoreRect");
         timerLabel = GetNode<Label>("UserInterface/TimerLabel");
+        endLabel = GetNode<Label>("UserInterface/EndLabel");
+        endRect = GetNode<TextureRect>("UserInterface/EndRect");
+        cancelButton = GetNode<Button>("UserInterface/MainMenu/MainMenuPanelContainer/VBoxContainer/CancelButton");
 
         interactAudio = GetNode<AudioStreamPlayer3D>("InteractAudioStreamPlayer3D");
         stepAudio = GetNode<AudioStreamPlayer3D>("StepAudioStreamPlayer3D");
@@ -125,7 +131,7 @@ public partial class Player : Node3D
         torchLightAudio = GetNode<AudioStreamPlayer3D>("TorchLightAudioStreamPlayer3D");
         torchExtinguishAudio = GetNode<AudioStreamPlayer3D>("TorchExtinguishAudioStreamPlayer3D");
         torchLoopAudio = GetNode<AudioStreamPlayer3D>("TorchLoopAudioStreamPlayer3D");
-        receiveHitAudio = GetNode<AudioStreamPlayer3D>("ReceiveHitAudioStreamPlayer3D"); // missing sound
+        receiveHitAudio = GetNode<AudioStreamPlayer3D>("ReceiveHitAudioStreamPlayer3D");
         deathAudio = GetNode<AudioStreamPlayer3D>("DeathAudioStreamPlayer3D"); // missing sound
         amphoraEquipAudio = GetNode<AudioStreamPlayer3D>("AmphoraEquipAudioStreamPlayer3D");
         amphoraDrinkAudio = GetNode<AudioStreamPlayer3D>("AmphoraDrinkAudioStreamPlayer3D");
@@ -137,13 +143,14 @@ public partial class Player : Node3D
         interactAreaType = InteractableArea.None;
         game.Log($"Entered {GetParent().Name}.");
         SetInteractKeycodeString();
-        menu.Visible = false;
         InitUI();
         base._Ready();
     }
 
     private void InitUI()
     {
+        menu.Visible = false;
+        cancelButton.Visible = true;
         if (game.foundItem1)
         {
             item1Texture.Texture = swordTexture;
@@ -156,6 +163,7 @@ public partial class Player : Node3D
         {
             item3Texture.Texture = amphoraTexture;
         }
+        healthBar.Value = game.health;
     }
 
     private void AddItem(Item item)
@@ -310,6 +318,10 @@ public partial class Player : Node3D
         amphoraDrinkAudio.Play();
         var restoreAmount = rand.RandiRange(amphoraRestoreMin, amphoraRestoreMax);
         game.Log($"You drank from the {Item.Amphora}. It restored {restoreAmount} HP.");
+
+        game.health += restoreAmount;
+        healthBar.Value = game.health;
+
         restoreRect.Visible = true;
         await ToSignal(GetTree().CreateTimer(0.1f), SceneTreeTimer.SignalName.Timeout);
         restoreRect.Visible = false;
@@ -325,28 +337,34 @@ public partial class Player : Node3D
     private void OnArea3DEntered(Area3D area)
     {
         Enum.TryParse(area.Name, out InteractableArea interactArea);
+        if (interactArea != InteractableArea.None)
+        {
+            interactAreaType = interactArea;
+            interactAreaParent = area.GetParent<Node3D>();
+        }
         switch (interactArea)
         {
             case InteractableArea.SwordPickupArea3D:
             case InteractableArea.TorchPickupArea3D:
             case InteractableArea.AmphoraPickupArea3D:
-            case InteractableArea.SpearPickupArea3D:
-                interactAreaType = interactArea;
-                interactAreaParent = area.GetParent<Node3D>();
-
-                if (interactArea == InteractableArea.SpearPickupArea3D)
-                    interactAreaParent = interactAreaParent.GetNode<Node3D>("Wooden Spear");
-
                 interactLabel.Text = $"Press [{keycodeString}] to pick up {area.Name.ToString().Replace("PickupArea3D", "")}!";
                 break;
             case InteractableArea.SceneTransitionArea3D:
-                interactAreaType = interactArea;
-                interactAreaParent = area.GetParent<Node3D>();
-
                 if (game.currentScene == Scene.outside)
                     interactLabel.Text = $"Press [{keycodeString}] to enter dungeon.";
                 else
                     interactLabel.Text = $"Press [{keycodeString}] to exit dungeon.";
+                break;
+            case InteractableArea.EscapeArea3D:
+                if (game.timerStarted)
+                    interactLabel.Text = $"Press [{keycodeString}] to row away!";
+                break;
+            case InteractableArea.SpearPickupArea3D:
+                if (!game.timerStarted)
+                {
+                    interactAreaParent = area.GetParent().GetNode<Node3D>("Spear");
+                    interactLabel.Text = $"Press [{keycodeString}] to claim the spear!";
+                }
                 break;
         }
     }
@@ -360,6 +378,7 @@ public partial class Player : Node3D
             case InteractableArea.TorchPickupArea3D:
             case InteractableArea.AmphoraPickupArea3D:
             case InteractableArea.SpearPickupArea3D:
+            case InteractableArea.EscapeArea3D:
                 interactLabel.Text = "";
                 interactAreaType = InteractableArea.None;
                 interactAreaParent = null;
@@ -395,12 +414,25 @@ public partial class Player : Node3D
                 interactAreaParent.QueueFree();
                 break;
             case InteractableArea.SpearPickupArea3D:
-                audioMgr.StopMusic();
-                audioMgr.Play(Audio.MusicEscape, AudioChannel.Music);
-                interactAreaParent.QueueFree();
-                game.timeToEscape.Start();
-                game.timerStarted = true;
-                game.Log("The ground rumbles as you grab the spear.\nCyclopes bellow from all corners of the island, somehow of one mind.\nYou must escape before they catch you!");
+                if (!game.timerStarted)
+                {
+                    interactLabel.Text = "";
+                    audioMgr.StopMusic();
+                    audioMgr.Play(Audio.MusicEscape, AudioChannel.Music);
+                    interactAreaParent.QueueFree();
+                    game.timeToEscape.Start();
+                    game.timerStarted = true;
+                    game.Log("The ground rumbles as you grab the spear.\nCyclopes bellow from all corners of the island, somehow of one mind.\nYou must escape before they catch you!");
+                }
+                break;
+            case InteractableArea.EscapeArea3D:
+                if (game.timerStarted)
+                {
+                    // win
+                    endRect.Visible = true;
+                    endLabel.Visible = true;
+                    GameOver("\n\nVICTORY");
+                }
                 break;
         }
     }
@@ -411,17 +443,16 @@ public partial class Player : Node3D
         var npcAttacker = (NPC)attacker;
         game.Log($"{npcAttacker.name} hit you for {damageDealt} damage.");
 
-        // need sounds for this
-        //receiveHitAudioPlayer.Play();
+        receiveHitAudio.Play();
 
-        health -= damageDealt;
-        healthBar.Value = health;
+        game.health -= damageDealt;
+        healthBar.Value = game.health;
 
         hitRect.Visible = true;
         await ToSignal(GetTree().CreateTimer(0.2f), SceneTreeTimer.SignalName.Timeout);
         hitRect.Visible = false;
 
-        if (health <= 0)
+        if (game.health <= 0)
         {
             GameOver($"\n\n\nYou have been slain by a {npcAttacker.name}! Your spirit will haunt the island for eternity!");
         }
@@ -429,11 +460,15 @@ public partial class Player : Node3D
 
     private void GameOver(string reason)
     {
+        cancelButton.Visible = false;
         game.returningFromDungeon = false;
         game.gameOver = true;
         menu.Visible = true;
         gameOverLabel.Visible = true;
         gameOverLabel.Text = reason;
+        game.timeToEscape.Paused = true;
+        audioMgr.StopMusic();
+        audioMgr.StopAmbience();
     }
 
     private void ItemSwitchHelper(Item newItem)
@@ -535,7 +570,8 @@ public partial class Player : Node3D
 
     private void HandleEscapeTimeoutSignal()
     {
-        GameOver("The cyclopes surround you, too many to fight off. Your last window to the mortal world is a massive foot descending upon your head.");
+        GameOver("\n\n\nThe cyclopes surround you, too many to fight off. Your last window to the mortal world is a massive foot descending upon your head.");
+        
     }
     private void HandleDisplayLogSignal()
     {

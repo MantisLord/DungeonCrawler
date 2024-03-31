@@ -5,6 +5,7 @@ public partial class Outside : Node3D
     private Game game;
     private Player player;
     private Area3D sceneTransitionArea3D;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{

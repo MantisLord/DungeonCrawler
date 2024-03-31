@@ -64,6 +64,8 @@ public partial class NPC : Node3D
     private MeshInstance3D cyclopsMesh5;
     private MeshInstance3D cyclopsMesh6;
 
+    private CollisionShape3D collision;
+
     public enum Animation
     {
         // Cyclops
@@ -189,6 +191,8 @@ public partial class NPC : Node3D
         cyclopsMesh4 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n4_low");
         cyclopsMesh5 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n5_low");
         cyclopsMesh6 = GetNode<MeshInstance3D>("Joints/Skeleton3D/n6_low");
+
+        collision = GetNode<CollisionShape3D>("StaticBody3D/CollisionShape3D");
 
         rand.Randomize();
 
@@ -453,12 +457,16 @@ public partial class NPC : Node3D
 
     public void ReceiveHit(Node3D attacker, Area3D hitArea, int damageDealt)
     {
+        if (currentState == State.Dead)
+            return;
+
         currentHealth -= damageDealt;
         game.Log($"{attacker.Name} hit {name}'s {hitArea.GetParent().Name} and dealt {damageDealt} damage! {name} has {currentHealth} HP remaining.");
         if (currentHealth <= 0)
         {
-            SetState(State.Dead); // maybe fix the ability to "kill" dead NPCs multiple times? but it's kind of funny
+            SetState(State.Dead);
             deathAudio.Play();
+            collision.Disabled = true;
         }
         else
         {

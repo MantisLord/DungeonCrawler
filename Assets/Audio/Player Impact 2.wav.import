@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://lyjcw0w8mv47"
+path="res://.godot/imported/Player Impact 2.wav-52c22ea5dab50f1820f91f4ccd94afee.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/Player Impact 2.wav"
+dest_files=["res://.godot/imported/Player Impact 2.wav-52c22ea5dab50f1820f91f4ccd94afee.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

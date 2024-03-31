@@ -55,6 +55,13 @@ theme_override_fonts/font = ExtResource("3_q78nl")
 theme_override_font_sizes/font_size = 30
 text = "Quit"
 
+[node name="CancelButton" type="Button" parent="MainMenuPanelContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_q78nl")
+theme_override_font_sizes/font_size = 30
+text = "Cancel"
+
 [node name="OptionsPanelContainer" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 1
@@ -128,6 +135,7 @@ text = "Back"
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/PlayButton" to="." method="PlayButtonPressed"]
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/OptionsButton" to="." method="OptionsButtonPressed"]
 [connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/QuitButton" to="." method="QuitButtonPressed"]
+[connection signal="pressed" from="MainMenuPanelContainer/VBoxContainer/CancelButton" to="." method="CancelButtonPressed"]
 [connection signal="toggled" from="OptionsPanelContainer/VBoxContainer/MoveStyleCheckButton" to="." method="TeleportModeToggled"]
 [connection signal="toggled" from="OptionsPanelContainer/VBoxContainer/DebugModeCheckButton" to="." method="DebugModeOptionToggled"]
 [connection signal="value_changed" from="OptionsPanelContainer/VBoxContainer/HBoxContainer/FOVHSlider" to="." method="FOVOptionChanged"]

@@ -117,7 +117,7 @@ size = Vector3(20, 20, 20)
 [node name="Pedestal" type="Node3D"]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 
-[node name="Wooden Spear" parent="." instance=ExtResource("1_7mo40")]
+[node name="Spear" parent="." instance=ExtResource("1_7mo40")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.179, -0.521298)
 
 [node name="Pedestal" type="Node3D" parent="."]

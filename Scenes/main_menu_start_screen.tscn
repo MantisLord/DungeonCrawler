@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://it3pfbmv6ili"]
+[gd_scene load_steps=7 format=3 uid="uid://it3pfbmv6ili"]
 
 [ext_resource type="PackedScene" uid="uid://cyx4c3b17w3il" path="res://Scenes/main_menu_shared.tscn" id="1_tvogv"]
 [ext_resource type="FontFile" uid="uid://bcwvx75bi6t3f" path="res://Assets/Font/Greconian.ttf" id="2_8ld26"]
 [ext_resource type="FontFile" uid="uid://cv3vn1d8xm048" path="res://Assets/Font/DIOGENES.ttf" id="2_ny3ih"]
 [ext_resource type="AudioStream" uid="uid://8exiasvcdnpp" path="res://Assets/Audio/Music/lyre_opening.wav" id="2_s6jpd"]
 [ext_resource type="Texture2D" uid="uid://717aw7txlill" path="res://Assets/Textures/Walter_Crane_-_Neptune's_Horses_(1910).jpg" id="5_1hxy5"]
+
+[sub_resource type="Theme" id="Theme_06w57"]
 
 [node name="MainMenuStartScreen" type="Control"]
 layout_mode = 3
@@ -58,7 +60,7 @@ horizontal_alignment = 1
 stream = ExtResource("2_s6jpd")
 autoplay = true
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="MainBGTextureRect" type="TextureRect" parent="."]
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 15
@@ -73,3 +75,54 @@ grow_vertical = 2
 mouse_filter = 2
 texture = ExtResource("5_1hxy5")
 expand_mode = 5
+
+[node name="IntroLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -638.0
+offset_top = -71.0
+offset_right = 638.0
+offset_bottom = 71.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_ny3ih")
+theme_override_font_sizes/font_size = 25
+text = "Fifty years ago, wayward King Odysseus landed home on Ithaca's shores.
+
+Now his legend has spread far and wide, and with the legend comes rumors of the cast-off objects scattered in the wake of his voyage like flotsam.
+Some say they are imbued with the power of the gods.
+
+One such object is the king's makeshift spear that blinded the one-eyed giant, Polyphemus..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BlackRect" type="ColorRect" parent="."]
+visible = false
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ProceedButton" type="Button" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 56.0
+grow_horizontal = 2
+theme = SubResource("Theme_06w57")
+theme_override_fonts/font = ExtResource("2_ny3ih")
+theme_override_font_sizes/font_size = 30
+text = "Proceed"
+
+[connection signal="pressed" from="ProceedButton" to="MainMenu" method="Play"]

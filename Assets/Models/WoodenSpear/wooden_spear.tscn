@@ -45,7 +45,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_6nn3d")
 
-[node name="Wooden Spear" type="Node3D"]
+[node name="Spear" type="Node3D"]
 
 [node name="SpearMesh" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArrayMesh_5ncbk")

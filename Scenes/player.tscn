@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://077fp6hi7wle"]
+[gd_scene load_steps=51 format=3 uid="uid://077fp6hi7wle"]
 
 [ext_resource type="Script" path="res://Scripts/Player.cs" id="1_sig3l"]
 [ext_resource type="PackedScene" uid="uid://dhgg40dbeo16r" path="res://Assets/Models/Sword/sword.tscn" id="3_62v5a"]
@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://bue8hemmkb3bb" path="res://Assets/Audio/Step/step.wav" id="7_th3ra"]
 [ext_resource type="AudioStream" uid="uid://2pxvl5omy8wb" path="res://Assets/Audio/Step/Stone Run 1.ogg" id="8_41rpm"]
 [ext_resource type="AudioStream" uid="uid://cwx7rj4vcv4s8" path="res://Assets/Audio/Step/Stone Run 2.ogg" id="9_8u06r"]
+[ext_resource type="Texture2D" uid="uid://c2hpcc15kbwob" path="res://Assets/Textures/Galley_fresco_Pompeii.jpg" id="10_n2egk"]
 [ext_resource type="AudioStream" uid="uid://8vvs6tcxmccj" path="res://Assets/Audio/Step/Stone Run 3.ogg" id="10_s68xy"]
 [ext_resource type="AudioStream" uid="uid://d2kcxihdr33rk" path="res://Assets/Audio/Step/Stone Run 4.ogg" id="11_qml7j"]
 [ext_resource type="AudioStream" uid="uid://b2un6dr4gsaal" path="res://Assets/Audio/Step/Stone Run 5.ogg" id="12_fjr7b"]
@@ -34,6 +35,8 @@
 [ext_resource type="PackedScene" uid="uid://buly4scxuj61m" path="res://Assets/Models/Torch/torch.tscn" id="29_5e60y"]
 [ext_resource type="AudioStream" uid="uid://cbmtrvvcmxg6r" path="res://Assets/Audio/amphora_drink.wav" id="32_vsy4n"]
 [ext_resource type="AudioStream" uid="uid://cehx6udhuipk" path="res://Assets/Audio/amphora_equip.mp3" id="33_dhc3n"]
+[ext_resource type="AudioStream" uid="uid://x51xyw722tmq" path="res://Assets/Audio/Player Impact 1.wav" id="34_6s6oc"]
+[ext_resource type="AudioStream" uid="uid://lyjcw0w8mv47" path="res://Assets/Audio/Player Impact 2.wav" id="35_l176w"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_bu3n7"]
 top_radius = 0.0
@@ -114,6 +117,13 @@ stream_2/weight = 1.0
 stream_3/stream = ExtResource("25_wmhyp")
 stream_3/weight = 1.0
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_upf65"]
+streams_count = 2
+stream_0/stream = ExtResource("34_6s6oc")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("35_l176w")
+stream_1/weight = 1.0
+
 [node name="Player" type="Node3D"]
 script = ExtResource("1_sig3l")
 
@@ -147,7 +157,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 target_position = Vector3(-1.5, 0, 0)
 
 [node name="Sword" parent="." instance=ExtResource("3_62v5a")]
-transform = Transform3D(-0.00224131, -0.00128741, 0.00966018, 0.00266648, -0.00961513, -0.00066274, 0.00937371, 0.00242733, 0.00249833, 0.692, -2.1, -0.635)
+transform = Transform3D(-0.00224131, -0.00128741, 0.00966018, 0.00266648, -0.00961513, -0.000662741, 0.00937371, 0.00242733, 0.00249833, 0.692, -2.1, -0.635)
 
 [node name="Torch" parent="." instance=ExtResource("29_5e60y")]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.692, -2, -0.635)
@@ -347,6 +357,45 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 0, 0, 0.196078)
 
+[node name="EndRect" type="TextureRect" parent="UserInterface"]
+visible = false
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("10_n2egk")
+expand_mode = 2
+stretch_mode = 6
+
+[node name="EndLabel" type="Label" parent="UserInterface"]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -298.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("5_f3r1y")
+theme_override_font_sizes/font_size = 25
+text = "You row against the tide towards your ship, spoils in hand, the bellows of many angry cyclopes fading behind you.
+The waves are growing rough in the coming storm. Salt water stings your eyes, and your vision narrows. Your boat sits low in the water, rocking dangerously. 
+
+But as you arrive, you realize no rope has been cast over the side to hoist you aboard.
+You squint up to see your captain and crew standing at the railings above, their weapons drawn, staring at you in abject horror. 
+
+Your single eye widens. Earth-shaker Poseidon has claimed a new son, to replace one slain long ago.
+
+
+"
+horizontal_alignment = 1
+vertical_alignment = 2
+
 [node name="RestoreRect" type="ColorRect" parent="UserInterface"]
 visible = false
 layout_mode = 1
@@ -355,7 +404,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 1, 0, 0.196078)
+color = Color(0, 1, 0, 0.0392157)
 
 [node name="InteractAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("6_sd0j0")
@@ -386,6 +435,7 @@ stream = ExtResource("21_n845t")
 max_db = 2.0
 
 [node name="ReceiveHitAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_upf65")
 
 [node name="DeathAudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 

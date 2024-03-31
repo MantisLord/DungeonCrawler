@@ -15,6 +15,7 @@ config/description="Shawn's Dungeon Crawler Engine."
 config/version="0.0.0.2"
 run/main_scene="res://Scenes/main_menu_start_screen.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
+boot_splash/image="res://Assets/Textures/1280px-Pompejanischer_Maler_um_70_001.png"
 config/icon="res://icon.svg"
 
 [autoload]

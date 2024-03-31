@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using System.Diagnostics;
 using static AudioManager;
 
 public partial class Game : Node
@@ -25,6 +24,7 @@ public partial class Game : Node
     public bool gameOver = false;
     public bool returningFromDungeon = false;
 
+    public int health = 100;
     public bool foundItem1 = false;
     public bool foundItem2 = false;
     public bool foundItem3 = false;
@@ -78,6 +78,7 @@ public partial class Game : Node
         TorchPickupArea3D,
         AmphoraPickupArea3D,
         SpearPickupArea3D,
+        EscapeArea3D,
     }
 
     public enum Item
